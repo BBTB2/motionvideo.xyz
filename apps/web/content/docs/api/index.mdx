@@ -1,6 +1,6 @@
 ---
 title: Public API
-description: Read-only JSON endpoints for the catalog, directories and moves.
+description: Read-only JSON endpoints for the catalog, directories and moves, and search over them.
 ---
 
 Read-only JSON over HTTPS from `https://motionvideo.xyz`. The endpoints need no key or sign-in. Move prompts are part of Pro: the [Pro MCP tools](/docs/mcp#pro-tools) return them when you sign in with a Pro or Business account.
@@ -27,6 +27,42 @@ The whole API is described in an OpenAPI 3.1 document at [`/openapi.json`](/open
   />
 </Cards>
 
+### Search
+
+Ask a question instead of downloading everything. These run the same filters as the site, so an answer matches what the gallery and directory pages show.
+
+<Cards>
+  <Card
+    title="Search the videos"
+    href="/docs/api/search-videos"
+    description="GET /api/catalog/search: videos by keywords, categories, models, colours, creators and type, paginated."
+  />
+  <Card
+    title="Get a video"
+    href="/docs/api/get-video"
+    description="GET /api/catalog/videos/{slug}: one video with its prompt, neighbours and similar videos."
+  />
+  <Card
+    title="Search a directory"
+    href="/docs/api/search-directory"
+    description="GET /api/catalog/directories/search: tools, skills, creatives or extras by keywords, filter, category and sort."
+  />
+  <Card
+    title="Get the filters"
+    href="/docs/api/get-facets"
+    description="GET /api/catalog/facets: every filter value with its count."
+  />
+</Cards>
+
+Several values in one filter are alternatives, and different filters all apply. Send lists comma-separated or as repeated parameters:
+
+```bash title="Terminal"
+curl 'https://motionvideo.xyz/api/catalog/search?model=Opus%205.5&color=red,orange'
+curl 'https://motionvideo.xyz/api/catalog/directories/search?section=skills&filter=remotion&sort=stars'
+```
+
+A parameter the endpoint doesn't know, or a value it can't take, gets a `400` that names the parameter and, for fixed sets, the values it accepts.
+
 Two plain-text files sit next to them:
 
 | File | Returns |
@@ -41,7 +77,7 @@ curl https://motionvideo.xyz/api/moves
 
 ## Caching
 
-Every JSON response carries an `ETag`: a quoted hash of the body. Send it back in `If-None-Match` and you get an empty `304 Not Modified` while nothing changed.
+Every JSON response carries `Cache-Control`. The download endpoints also carry an `ETag`: a quoted hash of the body. Send it back in `If-None-Match` and you get an empty `304 Not Modified` while nothing changed.
 
 Only download the catalog when it changed:
 
