@@ -6,6 +6,12 @@ import { ROUTES } from "@/constants/routes";
 import { SITE } from "@/constants/site";
 import { defineFeeds } from "@/lib/feeds";
 
+/**
+ * Products an entry is about, shown as badges on its card and page. Names of
+ * products, so they read the same in every language.
+ */
+export const CHANGELOG_TAGS = ["MCP", "API"] as const;
+
 // One MDX file per release in content/changelog; the file name is the slug
 // (/changelog/<slug>). `async`: only the frontmatter ships with the bundle, so
 // the index lists every entry without loading their bodies; an entry page
@@ -20,6 +26,8 @@ const entries = defineCollections({
     date: z.iso.date(),
     /** One line for the index, the meta description and link previews. */
     description: z.string(),
+    /** CHANGELOG_TAGS the entry is about; most entries have none. */
+    tags: z.array(z.enum(CHANGELOG_TAGS)).default([]),
     title: z.string(),
   }),
   type: "doc",

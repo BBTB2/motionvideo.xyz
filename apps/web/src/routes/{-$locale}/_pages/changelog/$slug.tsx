@@ -2,6 +2,7 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useIntlayer, useLocale } from "react-intlayer";
 import { ArrowLeft } from "reicon-react/icons/ArrowLeft";
 
+import { ChangelogTags } from "@/components/changelog-tags";
 import { LocalizedLink as Link } from "@/components/localized-link";
 import { PageHeader } from "@/components/page";
 import { ProseBody } from "@/components/prose-mdx";
@@ -37,9 +38,12 @@ const ChangelogEntry = () => {
         <PageHeader
           title={entry.data.title}
           intro={
-            <time dateTime={entry.data.date}>
-              {formatChangelogDate(entry.data.date, locale)}
-            </time>
+            <span className="flex flex-wrap items-center gap-2">
+              <time dateTime={entry.data.date}>
+                {formatChangelogDate(entry.data.date, locale)}
+              </time>
+              <ChangelogTags tags={entry.data.tags} />
+            </span>
           }
         />
         <ProseBody Body={entry.data.body} />
