@@ -51,6 +51,10 @@
     "from": "zh",
     "en": "Every time a new model comes out, everyone has it draw a \"pelican riding a bicycle\" to judge the model's spatial abilities, and it's basically always drawn as an animation with HTML and SVG. I've honestly gotten aesthetic fatigue from seeing them, so I want you to make the most complex, most detailed, most exquisite \"pelican riding a bicycle\" animated video. You can use any technology, no rush — you can spend a whole day drawing it."
   },
+  "bengtatsu-6b958b": {
+    "from": "zh",
+    "en": "Prompt 1: Generate a high-quality, highly lifelike, highly realistic SVG animation of the flying apsaras of the Dunhuang murals, in the style of real Dunhuang murals. Make it feel as if the flying immortals in the Dunhuang murals have truly come to life.\nPrompt 2: Extend the animation: the camera slowly scrolls from left to right, showing animations of different parts of the Dunhuang apsara murals, as if a person were viewing different sections of the mural from left to right. For example, some playing music, some dancing in flight, and so on."
+  },
   "bitfish-29c755": {
     "from": "zh",
     "en": "Input as follows: The simplest way for the devil to control humans is to keep them in a state of drifting. 98% of people drift their whole lives.\" —— Napoleon Hill, \"Outwitting the Devil\"\n\nUsing this insight as reference, create an explainer video with the most unbelievable 2D animation possible, 1 -3 minutes long, with coherent narration, dialogue, and sound."
@@ -66,6 +70,18 @@
   "cansincengiz-me-cf68dd": {
     "from": "tr",
     "en": "I wonder how good a motion graphics designer you are? To prove this to me, I want a 15-second motion graphics video from you. This video will promote https://t.co/TdKZEIYaxO and will appear in front of 10,000 people on x. do your best"
+  },
+  "cfenghub-1c1658": {
+    "from": "zh",
+    "en": "Write a single-page HTML with Three.js + GLSL that renders a real-time, cinematic, epic \"Nine-Tiered Heavenly Palace\": design and procedurally generate the sea of clouds, celestial architecture, volumetric light and atmosphere yourself (no external assets), with camera movement and a control panel (time of day, lighting, cloud density, camera, quality, etc.), aiming for breathtaking epic scale and extreme visual detail."
+  },
+  "cfenghub-9df42a": {
+    "from": "zh",
+    "en": "Write a single-page HTML with Three.js + GLSL that renders, in real time, a 15-second blockbuster motion commercial promoting \"Gemini 4 Neon\". Overall style: the bright, clean, premium feel of a tech launch-event ad; high-key lighting, light or bright gradient backgrounds, soft blue/purple/pink/warm-white gradients (take cues from Gemini's four-pointed star and gradient character), frosted glass, soft light, bokeh, delicate shadows, fluid gradients, refined 3D geometry and particles. Absolutely no neon tubes, cyberpunk, dark or glitch styles. The picture should feel airy and breathe, but the rhythm must be strong. No external resources; synthesize the sound procedurally with WebAudio (crisp electronic drums + light synths).\n\nRhythm: 120 BPM, 0.5 seconds per beat, 10 strict hit points across the film. Every hit point must land \"sound accent + camera cut/impact + text appearing + shape change\" at the same time, showing impact through clean scaling, push/pull, wipes and elastic animation rather than flashing and glitches.\n\nTimeline (can be refined, but the number of hit points and the rhythm must not drop):\n1. 0.0s Pure white/light frame, one drum hit, a colourful gradient light point blooms into a four-pointed star, the text \"Gemini 4 Neon\" floats in lightly\n2. 1.5s The camera slams forward through the star, colour floods in, text \"更快 FASTER\" with an elastic entrance\n3. 3.0s Transition to flowing gradient ribbons, text \"更聪明 SMARTER\" popping in letter by letter\n4. 4.5s The gradient ribbons fold into 3D geometry, the camera orbits, text \"更敢想 BOLDER\"\n5. 6.0s Three quick cuts (0.25s each), each a frosted-glass card: \"看 SEE\", \"听 HEAR\", \"说 SPEAK\", each with its own abstract graphic animation\n6. 7.5s The camera pulls back as countless glass cards and colour blocks arrange into a vast 3D space, text \"无限 NO LIMITS\", the camera dashes in with easing\n7. 9.0s The space folds and reassembles into a neat grid, text \"不止于答案 BEYOND ANSWERS\", the grid flips in a wave\n8. 10.5s Full-screen colour bursts into coloured particles and light flares, text \"想象即现实 IMAGINE → RENDER\"\n9. 12.0s The particles gracefully converge to the centre and condense into a crystalline glass 3D logo, countdown \"3 · 2 · 1\"\n10. 13.0s The \"Gemini 4 Neon\" logo holds, a soft light sweeps across, from 14.0s the tagline \"点亮下一个想法 / LIGHT UP WHAT'S NEXT\" appears, soft fade-out at 15.0s\n\nRequirements:\n- All text is procedurally generated animated type (letter-by-letter pop-in, mask wipes, elastic scaling, gradient fills, squash and stretch), with a different entrance for each hit point; modern, grand type with generous white space\n- Rich camera movement: push/pull, orbit, fly-through, pull-back; smooth camera moves and crisp transitions\n- Control panel: play/pause/replay, timeline scrubbing, BPM, colour theme switch (classic gradient / warm white-gold / cool blue), lighting and depth-of-field strength, editable copy, mute toggle, quality presets\n- Aim for Apple- and Google-keynote-level ad quality: precise hits, strong visual impact, bright and premium overall"
+  },
+  "chaoxiao-343048": {
+    "from": "zh",
+    "en": "Based on your own model's characteristics, make a promo short for yourself, I want to post it"
   },
   "claudecode_ut-8eaf38": {
     "from": "ja",
@@ -195,6 +211,10 @@
     "from": "ja",
     "en": "Make a \"top 5\" short following SKILL.md. Structure the script into 5 items and headings, and verify the facts against the official documentation. Draw the image for each item in code, and switch between them on a per-second basis to match the length of the Yukkuri voice audio"
   },
+  "jonathascosta89-1a9dde": {
+    "from": "pt",
+    "en": "make a presentation video of my project"
+  },
   "kaiyu_ai-0ea3b4": {
     "from": "ja",
     "en": "\"I'm making a manga of The Spider's Thread.\nhttps://t.co/8DlK2EPeo0\nPlease make a motion comic based on it.\nHowever, use Codex CLI for generating the variant images. Also, the only things you may use the Gemini API for are Gemini 3.8 Flash TTS and TTS Lite, and Lyria 3.5 for the BGM; since I'm on Tire1, make sure not to hit the per-minute or per-day limits.\nFor effects like the thread being lowered or someone climbing up the thread, don't just crop the image — make it look like an actual video effect of the thread really being lowered.\""
@@ -275,6 +295,10 @@
     "from": "zh",
     "en": "Make a 10-second color shadow-puppet play about 【Cao Chong Weighs the Elephant】. Silhouette layout, warm backlight shining through, jointed puppets. The scale pan, bronze bowl, and stones appear in turn: first balance it, then weigh the stones in batches and add them up. Captions pop in on the beat. Render it with code and export a playable video.\n\nMake a 12-second isometric 2.5D process animation about 【How Parcels Get Sorted】. Packages move along the sorting line, loading dock, flatbed transport, and customs checkpoint, with a numbered label for each step; finally the two lines merge into one. Clean and easy to follow.\n\nMake a 10-second scale comparison placing 【Earth, Jupiter, and the Sun】 on screen together at their true radii. The camera smoothly pulls back, the first object shrinks, and it lands the point: 「太阳底下约有 130 万个地球」 (「About 1.3 million Earths fit inside the Sun」). Clear numeric labels.\n\nMake a 10-second whiteboard hand-drawn animation. Black marker on a white background draws, stroke by stroke, 【a stick figure flinging 5 steamed buns in a row】, with red used only to highlight key points. The satisfaction particles get bigger each time, until the corners are completely filled. Caption: 第 1 个，满足感拉满 (No. 1, satisfaction maxed out).\n\nMake a 10-second cinematic WebGL evolution of a Chinese character, theme 【火 (fire)】. Tortoise shell, bronze, ink, and firelight textures. 「火」 continuously morphs from oracle-bone script to lightning, a torch, and then modern lighting, corresponding to 炎, 烈, 焰.\n\nUse three.js to make a 12-second exploded view taking apart 【a phone】. The shell, mid-frame, and chips burst apart in layers, the camera orbits and pushes in, and parts are labeled with dashed leader lines. Can be swapped for any structure.\n\nMake a 10-second 16-bit pixel-art take on the idiom 【黄粱一梦 (the Yellow Millet Dream)】. Taking a wife, passing the imperial exam, taming the river, going off to war — each segment about 1.6 seconds with hard cuts, finally returning to reality. Caption: 第二年，考中进士，当上了官 (The next year, he passed the imperial exam and became an official).\n\nMake a 10-second picture-book-style science explainer about 【How a Little Goldfish Swims】. Crayon lines with colored-pencil shading, jittering lines, symmetrical eyes, gills, and tail fin, with the tail swaying to the beat. Paper texture.\n\nMake a 10-second 3Blue1Brown-style math visualization about 【the Area of a Circle】. Dark background; the circle is cut into 8, 16, and 32 sectors that actually move and reassemble into a rectangle. The formula appears term by term and freezes on πr².\n\nMake a 10-second ancient-map animation about 【Chang'an to Dunhuang】. Parchment, light-ink mountain paths, a vermilion route drawn in one stroke, labeled with distances and a one-line explanation, finished with a seal stamp. The camera can zoom.\n\nMake a 10-second Kurzgesagt-style infographic about 【Folding Paper in Half: How Thick?】. Clean graphics, big numbers: folded 2 times, thickness 0.4 mm, thickness ×2. The camera pushes in at a steady rhythm until the end point.\n\nMake a 10-second flat motion graphic about 【Precipitation】. Solid-color geometry, no outlines. Tiny water droplets in the cloud gather and grow bigger and bigger, then fall. Two light/dark phases, cartoon clouds.\n\nMake a 10-second beat-synced kinetic typography piece, 120 BPM, about 【the Feynman Technique】. Each word hits on a beat, orange text cutting in on a black background. The four steps slam in one after another, with a final hammer blow: 讲不清楚，就是没真懂 (If you can't explain it clearly, you don't really understand it).\n\nMake a 10-second comic-panel animation about 【A Window Got Broken】. Black-and-white halftone plus one red. In class, getting caught, rushing out of the classroom — hard cuts between panels, with the last panel landing the point.\n\nMake a 12-second horizontal timeline about 【From Dartmouth to ChatGPT】. The camera advances along the axis, nodes scale up and light up. Large year numbers plus a one-line event. Example node: 1971，又过了 41 年 (1971, another 41 years later)."
   },
+  "noel_ai_lab-015ae8": {
+    "from": "ja",
+    "en": "Make a motion graphics video explaining the three models"
+  },
   "nonbiri_ai-796ae4": {
     "from": "ja",
     "en": "Is it also possible to give you images and have you make a motion graphics showreel?\n\nThe concept is \"portfolio showcase.\" The vibe prioritizes energy and momentum.\nFast transitions, strong colors, with screen shake and flashes."
@@ -331,9 +355,17 @@
     "from": "zh",
     "en": "Make a video introducing yourself Gemini 4 Carbon and use your creativity as much as possible."
   },
+  "shirotapandasan-b72e20": {
+    "from": "ja",
+    "en": "I just paid for Gemini AI Pro for the first time, so make a video that shows what I can do with it, how the models differ in performance, and how best to use them!\nA landscape video of about 90 seconds would be nice."
+  },
   "so_ainsight-5ac70d": {
     "from": "ja",
     "en": "Make an animated video using only JavaScript.\nThe theme is 「Claude Codeって何？」 (\"What is Claude Code?\"). 15 seconds, 16:9, hand-drawn paper-collage style, with Japanese narration.\n\nI'm leaving everything to you: script, assets, animation, and structure.\nImages with gpt-image-2.5, voice with Gemini TTS"
+  },
+  "suna_gaku-96989c": {
+    "from": "ja",
+    "en": "Create a video that shows off your best abilities and makes the most of Gemini 4 Neon's capabilities!"
   },
   "suna_gaku-aa145a": {
     "from": "ja",
@@ -415,6 +447,10 @@
     "from": "ja",
     "en": "Even if it's only in a rough form, I'd like you to show off your current abilities and create the strongest video to spread my Shin-Relativity theory."
   },
+  "walter201230pro-c5423e": {
+    "from": "zh",
+    "en": "Create from scratch and export a motion graphics concept short of about 20 seconds in 16:9 (1920×1080, 60fps), themed around your visual and motion expressiveness as \"Gemini 4  Neon\"; direct the specific concept, storyboard and music arrangement yourself."
+  },
   "willwang_xx-6db819": {
     "from": "zh",
     "en": "Make a svg animation of a pelican riding a bicycle with a giant panda on the back seat."
@@ -458,6 +494,14 @@
   "yunn260414-60d996": {
     "from": "zh",
     "en": "Help me make a video with js, topic: What is Git\nIt should explain things in simple terms so that someone with zero computer background can understand, and then introduce what some common commands mean, etc.\nIt needs sound, narrated in Chinese\nYou can use any tools or install tools, and you can search the web"
+  },
+  "zhang_baoqing-b06145": {
+    "from": "zh",
+    "en": "Make a pelican riding a bicycle with Three.js"
+  },
+  "zhang_baoqing-b84251": {
+    "from": "zh",
+    "en": "Design a 30-second launch video for Claude Opus 5.5"
   },
   "zhu185178-41d6a2": {
     "from": "zh",
