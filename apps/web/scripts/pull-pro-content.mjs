@@ -14,9 +14,13 @@
 //                                    redacted (after adding moves or scenes)
 //
 // Access: a local checkout, or `git` over HTTPS with your GitHub credentials
-// (or PRO_CONTENT_TOKEN). Without access in CI (CI=true), the redacted
-// samples in `src/server/data/samples/` stand in so typecheck and build
-// run; anywhere else a failed pull is an error, so nobody deploys samples.
+// (or PRO_CONTENT_TOKEN, e.g. a build secret on Cloudflare Workers Builds).
+// Without access, PRO_CONTENT_SAMPLES=1 installs the redacted samples in
+// `src/server/data/samples/` so typecheck and build run (GitHub Actions sets
+// it). It is an explicit opt-in, not `CI`: Workers Builds sets CI=true too,
+// and a production build on samples would serve "Sample prompt" to Pro users.
+// Workers Builds (WORKERS_CI=1) never uses samples; anywhere else a failed
+// pull is an error.
 import { execFile } from "node:child_process";
 import {
   copyFile,
@@ -210,10 +214,10 @@ try {
   }
   if (current.startsWith("real")) {
     log(`couldn't refresh (${reason}); keeping ${current}`);
-  } else if (process.env.CI) {
+  } else if (process.env.PRO_CONTENT_SAMPLES === "1" && !process.env.WORKERS_CI) {
     await copyAll(SAMPLES);
     await writeFile(MARKER, "sample\n");
-    log(`no access in CI (${reason}); using the redacted samples`);
+    log(`no access (${reason}); using the redacted samples (PRO_CONTENT_SAMPLES=1)`);
   } else {
     console.error(
       `pro:pull: couldn't pull ${REPO} (${reason}). Ask for access, set ` +

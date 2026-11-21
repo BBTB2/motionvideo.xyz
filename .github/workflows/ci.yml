@@ -15,6 +15,11 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
+# No access to the private Pro prompts in GitHub Actions: typecheck and build
+# run on the redacted samples (apps/web/scripts/pull-pro-content.mjs).
+env:
+  PRO_CONTENT_SAMPLES: "1"
+
 jobs:
   check:
     name: Lint and format
