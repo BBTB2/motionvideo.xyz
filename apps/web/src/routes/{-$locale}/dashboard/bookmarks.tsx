@@ -179,7 +179,7 @@ const Bookmarks = () => {
             </nav>
           </CollectionToolbar>
         )}
-        <div className="mx-auto flex w-full max-w-[1800px] flex-1 flex-col px-4 pt-6 pb-16 sm:px-6">
+        <div className="mx-auto flex w-full max-w-[1800px] flex-1 flex-col px-4 pt-6 pb-16 sm:px-6 lg:pt-3">
           {items.length > 0 ? (
             <VirtualMasonry items={items} />
           ) : (

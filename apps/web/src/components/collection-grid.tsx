@@ -17,7 +17,7 @@ export const CollectionGrid = ({
 }) => (
   <main
     id="main-content"
-    className="mx-auto w-full max-w-[1800px] px-4 pt-6 pb-16 sm:px-6"
+    className="mx-auto w-full max-w-[1800px] px-4 pt-6 pb-16 sm:px-6 lg:pt-3"
   >
     <VirtualMasonry items={items} />
     {emptyState}

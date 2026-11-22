@@ -662,7 +662,7 @@ export const CommandMenu = () => {
             id: "other:x",
             label: "X/Twitter",
             keywords: ["x", "twitter", "follow"],
-            icon: <XIcon className="size-4" />,
+            icon: <XIcon className="size-3.5" />,
             action: () => {
               window.open(LINK.X, "_blank", "noopener,noreferrer");
             },

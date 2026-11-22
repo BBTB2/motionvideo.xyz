@@ -14,7 +14,7 @@ export const ListingGrid = ({
   return (
     <main
       id="main-content"
-      className="mx-auto w-full max-w-[1800px] px-4 pt-6 pb-16 sm:px-6"
+      className="mx-auto w-full max-w-[1800px] px-4 pt-6 pb-16 sm:px-6 lg:pt-3"
     >
       <List className="grid grid-cols-1 gap-4 sm:auto-rows-fr sm:grid-cols-2 lg:grid-cols-4">
         <li className="flex flex-col justify-end sm:[&>section]:h-full">

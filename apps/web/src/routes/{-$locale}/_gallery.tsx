@@ -632,7 +632,7 @@ const Gallery = () => {
               rel="noopener noreferrer"
               className={buttonVariants({ variant: "outline", size: "lg" })}
             >
-              <XIcon aria-hidden="true" className="size-4" />
+              <XIcon aria-hidden="true" className="size-3.5" />
               {creatorContent.followOnX}
             </a>
             <Button

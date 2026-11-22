@@ -47,15 +47,10 @@ const CustomizeCard = ({
     className="group focus-visible:ring-ring relative block overflow-hidden rounded-xl outline-none focus-visible:ring-2"
   >
     <MotionPreview video={video} paused={false} />
-    {/* Title and creator, revealed over a bottom gradient on hover. */}
+    {/* Title revealed over a bottom gradient on hover, like the gallery card. */}
     <span className="pointer-events-none absolute inset-0 flex flex-col justify-end rounded-xl bg-linear-to-t from-black/70 via-transparent to-transparent p-2.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100 [@media(hover:none)]:opacity-100">
-      <span className="flex min-w-0 flex-col pl-8">
-        <span className="truncate text-sm font-medium tracking-tight text-white">
-          {video.title}
-        </span>
-        <span className="truncate text-[11px] text-white/70">
-          {video.creatorName ?? `@${video.handle}`}
-        </span>
+      <span className="h-7 truncate pr-2 pl-9 text-sm leading-7 font-medium tracking-tight text-white">
+        {video.title}
       </span>
     </span>
     {/* The creator's avatar, always visible bottom-left. */}
