@@ -14,7 +14,6 @@ export const ROUTES = {
   BLOG_JSON_FEED: "/blog/feed.json",
   BLOG_RSS: "/blog/rss.xml",
   BLOG_POST: "/blog/$slug",
-  BRAND: "/brand",
   CATEGORY: "/category/$category",
   CHANGELOG: "/changelog",
   CHANGELOG_ATOM: "/changelog/atom.xml",
@@ -40,6 +39,14 @@ export const ROUTES = {
   DASHBOARD_SPONSORSHIPS: "/dashboard/sponsorships",
   DASHBOARD_SPONSORSHIPS_NEW: "/dashboard/sponsorships/new",
   DASHBOARD_SUBMIT: "/dashboard/submit",
+  /** The design system: foundations, brand assets, and component registry. */
+  DESIGN: "/design",
+  DESIGN_BRAND: "/design/brand",
+  DESIGN_COMPONENTS: "/design/components",
+  /** One registry component's page: `params={{ slug: "button" }}`. */
+  DESIGN_COMPONENT: "/design/components/$slug",
+  /** Agent-facing design guidance; article Markdown uses /design/<path>.md. */
+  DESIGN_MD: "/design.md",
   DOCS: "/docs",
   DOCS_API: "/docs/api",
   /** Any docs page: `params={{ _splat: "mcp" }}`. */
@@ -109,7 +116,9 @@ export const ACCOUNT_PAGES: ReadonlySet<string> = new Set([
 // Keep in sync with `assets.run_worker_first` in wrangler.jsonc.
 export const STATIC_PAGES: readonly string[] = [
   ROUTES.ABOUT,
-  ROUTES.BRAND,
+  ROUTES.DESIGN,
+  ROUTES.DESIGN_BRAND,
+  ROUTES.DESIGN_COMPONENTS,
   ROUTES.CHANGELOG,
   ROUTES.CONTACT,
   ROUTES.PRIVACY,
@@ -128,11 +137,20 @@ export const STATIC_PAGES: readonly string[] = [
 export const PRERENDER_HEADER = "X-MotionVideo-Prerender";
 
 /**
- * A docs page's Markdown (for agents and "Copy as Markdown"): /docs →
- * /docs.md, /docs/mcp → /docs/mcp.md. Unprefixed, and the file extension
- * keeps the server from redirecting it to a locale.
+ * A docs or design article's Markdown (for agents and "Copy as Markdown").
+ * /design.md is the design guide; /design/index.md is the overview article.
+ * Other paths append .md: /docs/mcp → /docs/mcp.md. Unprefixed; the file
+ * extension keeps the server from redirecting it to a locale.
  */
-export const docsMarkdownPath = (docsPath: string) => `${docsPath}.md`;
+export const docsMarkdownPath = (path: string) =>
+  path === ROUTES.DESIGN ? `${path}/index.md` : `${path}.md`;
+
+/**
+ * A registry item's JSON for the shadcn CLI (`shadcn build`, registry.json):
+ * `npx shadcn add https://motionvideo.xyz/r/button.json`. Unprefixed, a
+ * static file.
+ */
+export const registryItemPath = (name: string) => `/r/${name}.json`;
 
 /** A gallery video's page, e.g. for feeds, JSON-LD and the sitemap. */
 export const videoPath = (slug: string) => `/videos/${slug}`;

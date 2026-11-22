@@ -4,12 +4,12 @@ import { useIntlayer, useLocale } from "react-intlayer";
 import { Lock } from "reicon-react/icons/Lock";
 
 import { LocalizedLink as Link } from "@/components/localized-link";
-import { buttonVariants } from "@/components/ui/button";
 import { localizedPath } from "@/constants/locales";
 import { planPrice } from "@/constants/plans";
 import type { LocalPrices } from "@/constants/plans";
 import { formatPrice } from "@/constants/pricing";
 import { ROUTES } from "@/constants/routes";
+import { buttonVariants } from "@/registry/ui/button";
 
 // Widths of the placeholder lines that stand in for the hidden prompt.
 const PLACEHOLDER_LINES = ["100%", "94%", "98%", "72%", "90%", "64%"];

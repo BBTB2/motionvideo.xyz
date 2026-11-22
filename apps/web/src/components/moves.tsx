@@ -19,7 +19,6 @@ import {
   StepButton,
   useArrowSteps,
 } from "@/components/motion-video";
-import { Button } from "@/components/ui/button";
 import type { LocalPrices } from "@/constants/plans";
 import { ROUTES } from "@/constants/routes";
 import { useTransientStatus } from "@/hooks/use-transient-status";
@@ -28,6 +27,7 @@ import type { MoveFamily } from "@/lib/move-families";
 import { movePath } from "@/lib/moves";
 import type { Move, MovePrompt } from "@/lib/moves";
 import { cn } from "@/lib/utils";
+import { Button } from "@/registry/ui/button";
 import type { MoveCardMedia, MovePromptResult } from "@/server/move-functions";
 
 // `**bold**` and `code` inside a line of move text.
