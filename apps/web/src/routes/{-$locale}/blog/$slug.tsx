@@ -17,6 +17,8 @@ import {
 import { pickVideos } from "@/lib/video-picks";
 import { blogPostingJsonLd } from "@/seo/json-ld";
 import { createMetadata } from "@/seo/metadata";
+import { blogPostMarkdown } from "@/server/blog-markdown";
+import { markdownResponse } from "@/server/docs-markdown";
 
 const BlogPostPage = () => {
   const { slug, videos } = Route.useLoaderData();
@@ -77,6 +79,20 @@ const BlogPostPage = () => {
 };
 
 export const Route = createFileRoute("/{-$locale}/blog/$slug")({
+  // The optional-locale article route also matches the English Markdown URL.
+  server: {
+    handlers: {
+      GET: async ({ params, next }) => {
+        if (params.locale !== undefined || !params.slug.endsWith(".md")) {
+          return next();
+        }
+        const post = findBlogPost(params.slug.slice(0, -3));
+        return post
+          ? markdownResponse(await blogPostMarkdown(post))
+          : new Response("Not found", { status: 404 });
+      },
+    },
+  },
   component: BlogPostPage,
   // Bodies load lazily (`async` in src/lib/blog.ts); fetch this one before
   // rendering so the page never suspends. Only the poster-card fields of the

@@ -23,7 +23,6 @@ import { Route as ApiUploadRouteImport } from './routes/api/upload'
 import { Route as BlogAtomDotxmlRouteImport } from './routes/blog.atom[.]xml'
 import { Route as BlogFeedDotjsonRouteImport } from './routes/blog.feed[.]json'
 import { Route as BlogRssDotxmlRouteImport } from './routes/blog.rss[.]xml'
-import { Route as BlogChar123slugChar125DotmdRouteImport } from './routes/blog.{$slug}[.]md'
 import { Route as ChangelogAtomDotxmlRouteImport } from './routes/changelog.atom[.]xml'
 import { Route as ChangelogFeedDotjsonRouteImport } from './routes/changelog.feed[.]json'
 import { Route as ChangelogRssDotxmlRouteImport } from './routes/changelog.rss[.]xml'
@@ -220,12 +219,6 @@ const BlogRssDotxmlRoute = BlogRssDotxmlRouteImport.update({
   path: '/blog/rss.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BlogChar123slugChar125DotmdRoute =
-  BlogChar123slugChar125DotmdRouteImport.update({
-    id: '/blog/{$slug}.md',
-    path: '/blog/{$slug}.md',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const ChangelogAtomDotxmlRoute = ChangelogAtomDotxmlRouteImport.update({
   id: '/changelog/atom.xml',
   path: '/changelog/atom.xml',
@@ -968,7 +961,6 @@ export interface FileRoutesByFullPath {
   '/blog/atom.xml': typeof BlogAtomDotxmlRoute
   '/blog/feed.json': typeof BlogFeedDotjsonRoute
   '/blog/rss.xml': typeof BlogRssDotxmlRoute
-  '/blog/{$slug}.md': typeof BlogChar123slugChar125DotmdRoute
   '/changelog/atom.xml': typeof ChangelogAtomDotxmlRoute
   '/changelog/feed.json': typeof ChangelogFeedDotjsonRoute
   '/changelog/rss.xml': typeof ChangelogRssDotxmlRoute
@@ -1107,7 +1099,6 @@ export interface FileRoutesByTo {
   '/blog/atom.xml': typeof BlogAtomDotxmlRoute
   '/blog/feed.json': typeof BlogFeedDotjsonRoute
   '/blog/rss.xml': typeof BlogRssDotxmlRoute
-  '/blog/{$slug}.md': typeof BlogChar123slugChar125DotmdRoute
   '/changelog/atom.xml': typeof ChangelogAtomDotxmlRoute
   '/changelog/feed.json': typeof ChangelogFeedDotjsonRoute
   '/changelog/rss.xml': typeof ChangelogRssDotxmlRoute
@@ -1230,7 +1221,6 @@ export interface FileRoutesById {
   '/blog/atom.xml': typeof BlogAtomDotxmlRoute
   '/blog/feed.json': typeof BlogFeedDotjsonRoute
   '/blog/rss.xml': typeof BlogRssDotxmlRoute
-  '/blog/{$slug}.md': typeof BlogChar123slugChar125DotmdRoute
   '/changelog/atom.xml': typeof ChangelogAtomDotxmlRoute
   '/changelog/feed.json': typeof ChangelogFeedDotjsonRoute
   '/changelog/rss.xml': typeof ChangelogRssDotxmlRoute
@@ -1373,7 +1363,6 @@ export interface FileRouteTypes {
     | '/blog/atom.xml'
     | '/blog/feed.json'
     | '/blog/rss.xml'
-    | '/blog/{$slug}.md'
     | '/changelog/atom.xml'
     | '/changelog/feed.json'
     | '/changelog/rss.xml'
@@ -1512,7 +1501,6 @@ export interface FileRouteTypes {
     | '/blog/atom.xml'
     | '/blog/feed.json'
     | '/blog/rss.xml'
-    | '/blog/{$slug}.md'
     | '/changelog/atom.xml'
     | '/changelog/feed.json'
     | '/changelog/rss.xml'
@@ -1634,7 +1622,6 @@ export interface FileRouteTypes {
     | '/blog/atom.xml'
     | '/blog/feed.json'
     | '/blog/rss.xml'
-    | '/blog/{$slug}.md'
     | '/changelog/atom.xml'
     | '/changelog/feed.json'
     | '/changelog/rss.xml'
@@ -1776,7 +1763,6 @@ export interface RootRouteChildren {
   BlogAtomDotxmlRoute: typeof BlogAtomDotxmlRoute
   BlogFeedDotjsonRoute: typeof BlogFeedDotjsonRoute
   BlogRssDotxmlRoute: typeof BlogRssDotxmlRoute
-  BlogChar123slugChar125DotmdRoute: typeof BlogChar123slugChar125DotmdRoute
   ChangelogAtomDotxmlRoute: typeof ChangelogAtomDotxmlRoute
   ChangelogFeedDotjsonRoute: typeof ChangelogFeedDotjsonRoute
   ChangelogRssDotxmlRoute: typeof ChangelogRssDotxmlRoute
@@ -1893,13 +1879,6 @@ declare module '@tanstack/react-router' {
       path: '/blog/rss.xml'
       fullPath: '/blog/rss.xml'
       preLoaderRoute: typeof BlogRssDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/blog/{$slug}.md': {
-      id: '/blog/{$slug}.md'
-      path: '/blog/{$slug}.md'
-      fullPath: '/blog/{$slug}.md'
-      preLoaderRoute: typeof BlogChar123slugChar125DotmdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/changelog/atom.xml': {
@@ -3301,7 +3280,6 @@ const rootRouteChildren: RootRouteChildren = {
   BlogAtomDotxmlRoute: BlogAtomDotxmlRoute,
   BlogFeedDotjsonRoute: BlogFeedDotjsonRoute,
   BlogRssDotxmlRoute: BlogRssDotxmlRoute,
-  BlogChar123slugChar125DotmdRoute: BlogChar123slugChar125DotmdRoute,
   ChangelogAtomDotxmlRoute: ChangelogAtomDotxmlRoute,
   ChangelogFeedDotjsonRoute: ChangelogFeedDotjsonRoute,
   ChangelogRssDotxmlRoute: ChangelogRssDotxmlRoute,
