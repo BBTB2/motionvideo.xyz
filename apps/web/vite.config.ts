@@ -39,6 +39,10 @@ const config = defineConfig(({ command }) => ({
           "@intlayer/dictionaries-entry/dynamic",
           "@intlayer/dictionaries-entry/fetch",
           "@intlayer/config/built",
+          // Let the SSR resolver below handle Fumadocs' Markdown renderer.
+          "fumadocs-core/server",
+          "fumadocs-mdx/runtime/macro",
+          "fumadocs-mdx/runtime/server",
         ],
       },
     },
