@@ -160,6 +160,7 @@ const Pro = () => {
             access={access}
             signedIn={signedIn}
             sale={sale}
+            parity={parity}
           />
           {sale && <SaleNote sale={sale} />}
           {parity && <ParityBanner offer={parity} />}

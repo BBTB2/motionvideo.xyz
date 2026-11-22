@@ -14,9 +14,10 @@ import { thanksgivingDay } from "./seasons.ts";
 //              (naming the discount early makes buyers wait for it)
 //   sale       the banner, the prices on /pro and the code at checkout
 //   last-call  the same, with the banner saying it ends soon
-// A sale skips visitors whose country already gets a purchasing power parity
-// price (the two would stack), and the code only takes for a customer's first
-// purchase (Dodo's `first_time` eligibility).
+// The banner shows in every country, but the sale prices and the code skip
+// visitors whose country already gets a purchasing power parity price (the
+// two would stack): they get the parity price. The code only takes for a
+// customer's first purchase (Dodo's `first_time` eligibility).
 
 export type OfferPhase = "teaser" | "sale" | "last-call";
 
@@ -79,12 +80,18 @@ export const OFFER_RULES = [
     // Black Friday week, Pacific time, around Thanksgiving (a Thursday): the
     // teaser from the Monday a week before, the sale from the Monday before,
     // the last call from Saturday, the end after Cyber Monday. Daylight saving
-    // has ended by then, so it is always UTC−8.
+    // has ended by then, so it is always UTC−8. 2026 opened early, on Friday
+    // November 13, with no teaser.
     schedule: (year) => {
       const thursday = thanksgivingDay(year);
+      const startsAt =
+        year === 2026
+          ? pstMidnight(2026, 10, 13)
+          : pstMidnight(year, 10, thursday - 3);
       return {
-        teaseAt: pstMidnight(year, 10, thursday - 10),
-        startsAt: pstMidnight(year, 10, thursday - 3),
+        teaseAt:
+          year === 2026 ? startsAt : pstMidnight(year, 10, thursday - 10),
+        startsAt,
         lastCallAt: pstMidnight(year, 10, thursday + 2),
         endsAt: pstMidnight(year, 10, thursday + 5),
       };

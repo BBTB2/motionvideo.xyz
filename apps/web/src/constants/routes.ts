@@ -69,6 +69,9 @@ export const ROUTES = {
   PRO: "/pro",
   PRIVACY: "/privacy",
   REFUNDS: "/refunds",
+  SECURITY: "/security",
+  SUBPROCESSORS: "/subprocessors",
+  DPA: "/dpa",
   SIGN_IN: "/sign-in",
   // Dev only (vite.config.ts drops it from production builds).
   SHOWCASE: "/showcase",
@@ -121,7 +124,17 @@ export const STATIC_PAGES: readonly string[] = [
   ROUTES.PRIVACY,
   ROUTES.REFUNDS,
   ROUTES.TERMS,
+  ROUTES.SUBPROCESSORS,
+  ROUTES.SECURITY,
+  ROUTES.DPA,
 ];
+
+/**
+ * Sent with each build-time render of a static page (vite.config.ts). The
+ * Worker leaves those renders unmarked (no offer banner, src/server.ts): the
+ * mark depends on the visitor and the day, so it's added per request instead.
+ */
+export const PRERENDER_HEADER = "X-MotionVideo-Prerender";
 
 /**
  * A docs or design article's Markdown (for agents and "Copy as Markdown").

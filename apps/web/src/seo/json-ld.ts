@@ -174,7 +174,10 @@ export type BreadcrumbItem = { path: string } & (
         | "design"
         | "privacy"
         | "refunds"
-        | "terms";
+        | "terms"
+        | "subprocessors"
+        | "security"
+        | "dpa";
     }
   | { name: string }
 );

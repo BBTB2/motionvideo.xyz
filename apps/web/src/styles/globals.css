@@ -488,6 +488,10 @@
   --animate-mv-rotate: mv-rotate 6s linear forwards;
   /* Header wordmark: sprocket holes running past "Video" (see logo.tsx). */
   --animate-brand-sprockets: brand-sprockets 500ms linear infinite;
+  /* Offer banner: a glass glint sweeping left to right, then a long rest;
+     first sweep 2.5s after load. */
+  --animate-offer-shimmer: offer-shimmer 7s cubic-bezier(0.45, 0, 0.55, 1) 2.5s
+    infinite;
 }
 
 @keyframes brand-sprockets {
@@ -514,6 +518,16 @@
   }
   to {
     fill-opacity: 1;
+  }
+}
+
+@keyframes offer-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  30%,
+  100% {
+    transform: translateX(100%);
   }
 }
 

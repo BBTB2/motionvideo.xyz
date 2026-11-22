@@ -52,20 +52,51 @@ export const findIterations = (value: string | undefined) =>
 
 // Models creators reported making their videos with, as shown in the gallery.
 // The URL carries a slug: `?model=opus-5-5` on Discover, or the
-// `/model/opus-5-5` page.
+// `/model/opus-5-5` page. Kept grouped by MOTION_MODEL_FAMILY.
 export const MOTION_MODELS = [
   "Opus 5.5",
+  "Fable 5",
+  "Fable 5.1",
+  "Fable 5.2",
   "Fable 5.5",
-  "Gemini 4 Argon",
+  "Mythos 5",
+  "Mythos 5.2",
   "GPT-6 Astra",
+  "Gemini 4 Argon",
+  "Gemini 4 Carbon",
+  "Gemini 4 Neon",
 ] as const;
 export type MotionModel = (typeof MOTION_MODELS)[number];
 /** Each model's full name, for page titles and copy. */
 export const MOTION_MODEL_NAMES: Record<MotionModel, string> = {
   "Opus 5.5": "Claude Opus 5.5",
+  "Fable 5": "Claude Fable 5",
+  "Fable 5.1": "Claude Fable 5.1",
+  "Fable 5.2": "Claude Fable 5.2",
   "Fable 5.5": "Claude Fable 5.5",
-  "Gemini 4 Argon": "Gemini 4 Argon",
+  "Mythos 5": "Claude Mythos 5",
+  "Mythos 5.2": "Claude Mythos 5.2",
   "GPT-6 Astra": "GPT-6 Astra",
+  "Gemini 4 Argon": "Gemini 4 Argon",
+  "Gemini 4 Carbon": "Gemini 4 Carbon",
+  "Gemini 4 Neon": "Gemini 4 Neon",
+};
+// Model families, named like the models (Claude, GPT, Gemini) rather than the
+// labs, so the gallery's model filter can nest each family's models.
+export const MOTION_MODEL_FAMILIES = ["Claude", "GPT", "Gemini"] as const;
+export type MotionModelFamily = (typeof MOTION_MODEL_FAMILIES)[number];
+export const MOTION_MODEL_FAMILY: Record<MotionModel, MotionModelFamily> = {
+  "Opus 5.5": "Claude",
+  "Fable 5": "Claude",
+  "Fable 5.1": "Claude",
+  "Fable 5.2": "Claude",
+  "Fable 5.5": "Claude",
+  "Mythos 5": "Claude",
+  "Mythos 5.2": "Claude",
+  "GPT-6 Astra": "GPT",
+  "Gemini 4 Argon": "Gemini",
+  "Gemini 4 Carbon": "Gemini",
+  "Gemini 4 Neon": "Gemini",
 };
 export const motionModelSlug = (model: string) =>
   model.toLowerCase().replaceAll(/[^a-z\d]+/gu, "-");
@@ -194,56 +225,150 @@ export const parseFilterColors = (value: string | undefined): string[] =>
 // the same hue family and lightness, not just the exact shade.
 const COLOR_MATCH_DISTANCE = 0.11;
 
-const matchesColors = (video: MotionVideo, picked: string[]) =>
-  picked.every((hex) =>
-    (video.colors ?? []).some(
-      (own) => hexDistance(hex, own) < COLOR_MATCH_DISTANCE
-    )
+const hasColor = (video: MotionVideo, hex: string) =>
+  (video.colors ?? []).some(
+    (own) => hexDistance(hex, own) < COLOR_MATCH_DISTANCE
   );
+
+/** The named colours (MOTION_COLORS) a video contains, in that order. */
+export const videoColorNames = (video: MotionVideo): MotionColor["slug"][] =>
+  MOTION_COLORS.filter((color) => hasColor(video, color.hex)).map(
+    (color) => color.slug
+  );
+
+/**
+ * What to match, one facet per field. Several values in a facet are
+ * alternatives (product-ui or charts); every facet given must hold. An
+ * absent facet doesn't filter; an empty list matches nothing.
+ */
+export interface VideoCriteria {
+  q?: string;
+  categories?: readonly MotionCategory[];
+  /** Exact MOTION_MODELS names. */
+  models?: readonly string[];
+  /** Normalized hexes. */
+  colors?: readonly string[];
+  /** `all` (the gallery's colour filter): every colour; `any`: one is enough. */
+  colorMatch?: "any" | "all";
+  /** X handles, compared ignoring case. */
+  creators?: readonly string[];
+  type?: MotionType;
+}
+
+export type VideoFacet =
+  | "q"
+  | "category"
+  | "model"
+  | "color"
+  | "creator"
+  | "type";
+
+/** One test per facet in `criteria`, so callers can also count each alone. */
+export const videoMatchers = (
+  criteria: VideoCriteria
+): { facet: VideoFacet; test: (video: MotionVideo) => boolean }[] => {
+  const matchers: {
+    facet: VideoFacet;
+    test: (video: MotionVideo) => boolean;
+  }[] = [];
+  const { categories, models, colors, creators, type } = criteria;
+  if (creators) {
+    const handles = new Set(creators.map((handle) => handle.toLowerCase()));
+    matchers.push({
+      facet: "creator",
+      test: (video) => handles.has(video.handle.toLowerCase()),
+    });
+  }
+  if (type) {
+    matchers.push({
+      facet: "type",
+      test: (video) => video.tags.includes(type),
+    });
+  }
+  if (models) {
+    matchers.push({
+      facet: "model",
+      test: (video) =>
+        video.model !== undefined && models.includes(video.model),
+    });
+  }
+  if (categories) {
+    matchers.push({
+      facet: "category",
+      test: (video) =>
+        categories.some((category) => video.contentTags.includes(category)),
+    });
+  }
+  if (colors) {
+    matchers.push({
+      facet: "color",
+      test: (video) =>
+        criteria.colorMatch === "any"
+          ? colors.some((hex) => hasColor(video, hex))
+          : colors.every((hex) => hasColor(video, hex)),
+    });
+  }
+  const words = criteria.q?.trim().toLowerCase().split(/\s+/u).filter(Boolean);
+  if (words?.length) {
+    matchers.push({
+      facet: "q",
+      test: (video) => {
+        const text = [
+          video.title,
+          video.handle,
+          video.prompt ?? "",
+          ...video.contentTags,
+        ]
+          .join(" ")
+          .toLowerCase();
+        return words.every((word) => text.includes(word));
+      },
+    });
+  }
+  return matchers;
+};
+
+/** Videos matching every facet of `criteria`, newest or oldest first if set. */
+export const matchMotionVideos = (
+  videos: MotionVideo[],
+  criteria: VideoCriteria,
+  sort?: "newest" | "oldest"
+): MotionVideo[] => {
+  const matchers = videoMatchers(criteria);
+  const filtered = videos.filter((video) =>
+    matchers.every((matcher) => matcher.test(video))
+  );
+  if (sort) {
+    const direction = sort === "newest" ? -1 : 1;
+    filtered.sort((a, b) => direction * a.date.localeCompare(b.date));
+  }
+  return filtered;
+};
 
 export const filterMotionVideos = (
   videos: MotionVideo[],
   search: MotionFilters
 ): MotionVideo[] => {
-  const words = search.q?.trim().toLowerCase().split(/\s+/u) ?? [];
+  const model = findMotionModel(search.model);
   const colors = parseFilterColors(search.color);
-  const filtered = videos.filter((video) => {
-    if (
-      search.creator &&
-      video.handle.toLowerCase() !== search.creator.toLowerCase()
-    ) {
-      return false;
-    }
-    if (search.type && !video.tags.includes(search.type)) {
-      return false;
-    }
-    if (
-      search.model &&
-      (!video.model || motionModelSlug(video.model) !== search.model)
-    ) {
-      return false;
-    }
-    if (search.category && !video.contentTags.includes(search.category)) {
-      return false;
-    }
-    if (colors.length > 0 && !matchesColors(video, colors)) {
-      return false;
-    }
-    const text = [
-      video.title,
-      video.handle,
-      video.prompt ?? "",
-      ...video.contentTags,
-    ]
-      .join(" ")
-      .toLowerCase();
-    return words.every((word) => text.includes(word));
-  });
-  if (search.sort) {
-    const direction = search.sort === "newest" ? -1 : 1;
-    filtered.sort((a, b) => direction * a.date.localeCompare(b.date));
+  // An unknown model slug matches nothing.
+  let models: string[] | undefined;
+  if (search.model) {
+    models = model ? [model] : [];
   }
-  return filtered;
+  return matchMotionVideos(
+    videos,
+    {
+      categories: search.category ? [search.category] : undefined,
+      colorMatch: "all",
+      colors: colors.length > 0 ? colors : undefined,
+      creators: search.creator ? [search.creator] : undefined,
+      models,
+      q: search.q,
+      type: search.type,
+    },
+    search.sort
+  );
 };
 
 // How far, on average, each colour of `from` is from its nearest in `to`.

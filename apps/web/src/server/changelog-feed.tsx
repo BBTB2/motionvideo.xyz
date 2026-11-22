@@ -25,13 +25,14 @@ export const CHANGELOG_FEED: FeedSource = {
       CHANGELOG_ENTRIES.map(async (entry) => {
         // Bodies load lazily; once loaded they render without suspending.
         await entry.data.preload();
-        const { body: Body, date, description, title } = entry.data;
+        const { body: Body, date, description, tags, title } = entry.data;
         const cover: VideoPick | undefined = covers[entry.data.cover];
         return {
           cover,
           date,
           html: feedHtml(cover, <Body components={FEED_MDX_COMPONENTS} />),
           summary: description,
+          tags,
           title,
           url: pageUrl(entry.url),
         };
