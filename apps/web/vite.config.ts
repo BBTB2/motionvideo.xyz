@@ -1,3 +1,5 @@
+import { fileURLToPath } from "node:url";
+
 import { cloudflare } from "@cloudflare/vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
@@ -42,6 +44,17 @@ const config = defineConfig(({ command }) => ({
     },
   },
   plugins: [
+    // Workers have AsyncLocalStorage via nodejs_compat; select the real
+    // Fumadocs Markdown renderer instead of its browser stub in SSR only.
+    {
+      name: "fumadocs-worker-markdown",
+      enforce: "pre",
+      applyToEnvironment: ({ name }) => name === "ssr",
+      resolveId: (id) =>
+        id === "fumadocs-core/server"
+          ? fileURLToPath(import.meta.resolve(id))
+          : null,
+    },
     devtools(),
     // One instance for every MDX source: content/docs (source.config.ts) is
     // compiled into `.source/` at build time, and the macro compiles the
