@@ -1,5 +1,6 @@
 import { createFileRoute, getRouteApi, notFound } from "@tanstack/react-router";
 import { useIntlayer } from "react-intlayer";
+import { ArrowLeft } from "reicon-react/icons/ArrowLeft";
 
 import { LocalizedLink as Link } from "@/components/localized-link";
 import { LockedPrompt } from "@/components/locked-prompt";
@@ -7,6 +8,7 @@ import { PageMain } from "@/components/page";
 import { PromptCustomizer } from "@/components/prompt-customizer";
 import { ROUTES } from "@/constants/routes";
 import { findPromptTemplate, templatePath } from "@/lib/prompt-templates";
+import { buttonVariants } from "@/registry/ui/button";
 import { createMetadata } from "@/seo/metadata";
 import { getTemplatePrompt } from "@/server/template-functions";
 
@@ -27,9 +29,10 @@ const CustomizeTemplate = () => {
       <Link
         to={ROUTES.TEMPLATE}
         params={{ templateId: template.id }}
-        className="text-muted-foreground hover:text-foreground w-fit text-sm underline-offset-4 transition-colors hover:underline"
+        className={buttonVariants({ variant: "ghost", className: "w-fit" })}
       >
-        ← {template.name}
+        <ArrowLeft data-icon="inline-start" />
+        {template.name}
       </Link>
 
       <header className="flex flex-col gap-2">

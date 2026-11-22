@@ -114,12 +114,12 @@ export const ACCOUNT_PAGES: ReadonlySet<string> = new Set([
 // Content pages with no per-request data: rendered to HTML at build time
 // (vite.config.ts) and served by the Worker from static assets (src/server.ts).
 // Keep in sync with `assets.run_worker_first` in wrangler.jsonc.
+// The changelog index is rendered on request for its live sponsor placements.
 export const STATIC_PAGES: readonly string[] = [
   ROUTES.ABOUT,
   ROUTES.DESIGN,
   ROUTES.DESIGN_BRAND,
   ROUTES.DESIGN_COMPONENTS,
-  ROUTES.CHANGELOG,
   ROUTES.CONTACT,
   ROUTES.PRIVACY,
   ROUTES.REFUNDS,
