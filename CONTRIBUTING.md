@@ -55,6 +55,16 @@ pnpm --filter @motionvideo/web auth:schema
 
 Local Cloudflare bindings (D1, R2, Durable Objects, rate limiters) are emulated by the Cloudflare Vite plugin, so `pnpm dev` does not need a Cloudflare account. Wrangler stores local state in `apps/web/.wrangler`, which is gitignored.
 
+### Cloudflare preview database
+
+Branch previews share the `motionvideo-preview` D1 database. Workers Builds does not apply its migrations. Before testing a preview that needs a new schema, run:
+
+```bash
+pnpm --filter @motionvideo/web db:migrate:preview
+```
+
+This targets preview only. If the preview already hit a database error during Better Auth initialization, redeploy it after migrating: the Worker keeps its auth instance for the lifetime of the isolate.
+
 ## Development
 
 ### Project layout
