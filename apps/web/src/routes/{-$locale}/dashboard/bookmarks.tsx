@@ -12,7 +12,6 @@ import {
   DIRECTORY_COVER_RATIO,
   DirectoryCard,
 } from "@/components/directory-card";
-import { FadeScroller } from "@/components/fade-scroller";
 import { LocalizedLink as Link } from "@/components/localized-link";
 import { MotionVideoCard, MotionVideoOverlay } from "@/components/motion-video";
 import { AccountPageHeader, pageContainerClass } from "@/components/page";
@@ -158,9 +157,9 @@ const Bookmarks = () => {
         />
         {visible.length > 0 && (
           <CollectionToolbar>
-            <FadeScroller
-              label={content.filterKind.value}
-              className="-mx-1 -my-1 min-w-0 basis-full px-1 py-1"
+            <nav
+              aria-label={content.filterKind.value}
+              className="no-scrollbar scroll-fade-x -mx-1 -my-1 flex min-w-0 basis-full gap-2 overflow-x-auto px-1 py-1"
             >
               {[undefined, ...BOOKMARK_KINDS.filter((k) => counts.has(k))].map(
                 (value) => (
@@ -177,10 +176,10 @@ const Bookmarks = () => {
                   />
                 )
               )}
-            </FadeScroller>
+            </nav>
           </CollectionToolbar>
         )}
-        <div className="mx-auto flex w-full max-w-[1800px] flex-1 flex-col px-4 pt-2.5 pb-16 sm:px-6">
+        <div className="mx-auto flex w-full max-w-[1800px] flex-1 flex-col px-4 pt-6 pb-16 sm:px-6">
           {items.length > 0 ? (
             <VirtualMasonry items={items} />
           ) : (

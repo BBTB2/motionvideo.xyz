@@ -28,7 +28,6 @@ import {
   CollectionToolbar,
 } from "@/components/collection-toolbar";
 import { ColorPicker } from "@/components/color-picker";
-import { FadeScroller } from "@/components/fade-scroller";
 import { Claude, ColorDots, Gemini, OpenAI, XIcon } from "@/components/icons";
 import { JobsWidget } from "@/components/jobs-widget";
 import { MotionVideoCard, setMorphCard } from "@/components/motion-video";
@@ -716,9 +715,9 @@ const Gallery = () => {
     <>
       <SiteHeader />
       <CollectionToolbar label={content.browse.value}>
-        <FadeScroller
-          label={content.filterCategory.value}
-          className="-mx-1 -my-1 min-w-0 flex-1 px-1 py-1 lg:flex-none lg:basis-[65%]"
+        <nav
+          aria-label={content.filterCategory.value}
+          className="no-scrollbar scroll-fade-x -mx-1 -my-1 flex min-w-0 flex-1 gap-2 overflow-x-auto px-1 py-1 lg:flex-none lg:basis-[65%]"
         >
           <CategoryChip
             to={scope?.kind === "creator" ? "/creators/$creator" : "/"}
@@ -765,7 +764,7 @@ const Gallery = () => {
               />
             );
           })}
-        </FadeScroller>
+        </nav>
         {/* The chips are pills: the group's last button (Featured) keeps a
             fully rounded right end instead of the group's default radius. */}
         <ButtonGroup className="ml-auto shrink-0 [&>[data-slot]:not(:has(~[data-slot]))]:rounded-r-full!">

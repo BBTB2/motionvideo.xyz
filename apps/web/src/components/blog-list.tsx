@@ -54,7 +54,7 @@ export const BlogList = ({
   return (
     <>
       <CollectionToolbar label={content.filterBy.value}>
-        <div className="flex flex-wrap gap-2">
+        <div className="no-scrollbar scroll-fade-x flex gap-2 overflow-x-auto">
           <CategoryChip
             to={ROUTES.BLOG}
             active={!activeTag}

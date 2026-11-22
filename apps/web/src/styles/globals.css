@@ -1041,19 +1041,6 @@ media-theme-sutro {
   );
 }
 
-/* Fade widths for `FadeScroller`; registered so they can transition. */
-@property --fade-start {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 0px;
-}
-
-@property --fade-end {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 0px;
-}
-
 @keyframes mv-rotate {
   from {
     width: 0%;

@@ -11,7 +11,6 @@ import {
   CategoryChip,
   CollectionToolbar,
 } from "@/components/collection-toolbar";
-import { FadeScroller } from "@/components/fade-scroller";
 import { LocalizedLink as Link } from "@/components/localized-link";
 import { CreatorAvatar, MotionPreview } from "@/components/motion-video";
 import { ROUTES } from "@/constants/routes";
@@ -116,10 +115,7 @@ const CustomizeIndex = () => {
   return (
     <>
       <CollectionToolbar label={content.filterCategory.value}>
-        <FadeScroller
-          label={content.filterCategory.value}
-          className="-mx-1 -my-1 min-w-0 flex-1 px-1 py-1"
-        >
+        <div className="no-scrollbar scroll-fade-x -mx-1 -my-1 flex min-w-0 flex-1 gap-2 overflow-x-auto px-1 py-1">
           <CategoryChip
             active={!category}
             label={gallery.all}
@@ -135,7 +131,7 @@ const CustomizeIndex = () => {
               search={{ category: entry }}
             />
           ))}
-        </FadeScroller>
+        </div>
       </CollectionToolbar>
       <CollectionGrid
         items={items}
