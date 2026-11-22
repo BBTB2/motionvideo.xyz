@@ -14,12 +14,12 @@ import {
 import { FadeScroller } from "@/components/fade-scroller";
 import { LocalizedLink as Link } from "@/components/localized-link";
 import { MotionPreview } from "@/components/motion-video";
-import type { MasonryItem } from "@/components/virtual-masonry";
 import { ROUTES } from "@/constants/routes";
 import catalog from "@/data/motion-catalog.json";
 import { useLocalizedNavigate } from "@/hooks/use-localized-navigate";
 import { MOTION_CATEGORIES } from "@/lib/motion-catalog";
 import type { MotionCategory, MotionVideo } from "@/lib/motion-catalog";
+import type { MasonryItem } from "@/registry/components/virtual-masonry";
 import { createMetadata } from "@/seo/metadata";
 
 const videos: MotionVideo[] = catalog.videos;

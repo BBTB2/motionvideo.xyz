@@ -24,6 +24,8 @@
       "/about",
       "/brand",
       "/contact",
+      "/design",
+      "/design/*",
       "/privacy",
       "/refunds",
       "/terms",

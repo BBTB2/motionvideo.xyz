@@ -6,9 +6,9 @@ import { LocalizedLink as Link } from "@/components/localized-link";
 import { LockedPrompt } from "@/components/locked-prompt";
 import { PageMain } from "@/components/page";
 import { PromptCustomizer } from "@/components/prompt-customizer";
-import { buttonVariants } from "@/components/ui/button";
 import { ROUTES } from "@/constants/routes";
 import { findPromptTemplate, templatePath } from "@/lib/prompt-templates";
+import { buttonVariants } from "@/registry/ui/button";
 import { createMetadata } from "@/seo/metadata";
 import { getTemplatePrompt } from "@/server/template-functions";
 
@@ -16,7 +16,7 @@ const layoutApi = getRouteApi("/{-$locale}/templates");
 
 const CustomizeTemplate = () => {
   const content = useIntlayer("templates-page");
-  const { signedIn } = layoutApi.useLoaderData();
+  const { signedIn, prices } = layoutApi.useLoaderData();
   const { template, prompt } = Route.useLoaderData();
   const path = templatePath(template);
 
@@ -49,6 +49,7 @@ const CustomizeTemplate = () => {
           title={content.lockedTitle}
           signInReason={content.signInReason}
           signedIn={signedIn}
+          prices={prices}
           redirect={`${path}/customize`}
           track={{
             "data-track": "templates_unlock",

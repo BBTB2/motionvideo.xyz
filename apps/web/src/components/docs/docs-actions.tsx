@@ -223,7 +223,7 @@ const subscribeShareSupport = () => () => {
 export interface DocsActionsProps {
   title: string;
   description: string;
-  /** Public page path, including its locale when shown. */
+  /** Public page path. Docs and design use an unprefixed path; articles may include their locale. */
   url: string;
   /**
    * The file the page is built from, relative to apps/web, for the edit

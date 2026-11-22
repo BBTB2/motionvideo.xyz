@@ -5,11 +5,11 @@ import { ArrowLeft } from "reicon-react/icons/ArrowLeft";
 import { LocalizedLink as Link } from "@/components/localized-link";
 import { PageMain } from "@/components/page";
 import { PromptCustomizer } from "@/components/prompt-customizer";
-import { buttonVariants } from "@/components/ui/button";
 import { ROUTES } from "@/constants/routes";
 import catalog from "@/data/motion-catalog.json";
 import type { MotionVideo } from "@/lib/motion-catalog";
 import { promptFor } from "@/lib/prompt-translations";
+import { buttonVariants } from "@/registry/ui/button";
 import { createMetadata } from "@/seo/metadata";
 
 const videos: MotionVideo[] = catalog.videos;
