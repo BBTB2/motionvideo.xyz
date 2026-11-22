@@ -71,6 +71,8 @@ export interface FeedItem {
   /** The entry as HTML (`feedHtml`). */
   html: string;
   cover: VideoPick | undefined;
+  /** Topics such as `MCP`: RSS and Atom categories, JSON Feed tags. */
+  tags?: readonly string[];
 }
 
 /** A section's feeds and how to build their items. */
@@ -150,6 +152,9 @@ export const rssResponse = async (source: FeedSource) => {
       `      <guid isPermaLink="true">${xml(item.url)}</guid>`,
       `      <pubDate>${rfc822(item.date)}</pubDate>`,
       `      <description>${xml(item.summary)}</description>`,
+      ...(item.tags ?? []).map(
+        (tag) => `      <category>${xml(tag)}</category>`
+      ),
       `      <content:encoded>${xml(item.html)}</content:encoded>`,
       ...thumbnail(item.cover).map((line) => `      ${line}`),
       "    </item>",
@@ -190,6 +195,7 @@ export const atomResponse = async (source: FeedSource) => {
       `    <published>${rfc3339(item.date)}</published>`,
       `    <updated>${rfc3339(item.date)}</updated>`,
       `    <summary>${xml(item.summary)}</summary>`,
+      ...(item.tags ?? []).map((tag) => `    <category term="${xml(tag)}"/>`),
       `    <content type="html">${xml(item.html)}</content>`,
       ...thumbnail(item.cover).map((line) => `    ${line}`),
       "  </entry>",
@@ -222,6 +228,7 @@ export const jsonFeedResponse = async (source: FeedSource) => {
         summary: item.summary,
         content_html: item.html,
         image: item.cover ? absoluteUrl(item.cover.poster) : undefined,
+        tags: item.tags?.length ? item.tags : undefined,
         date_published: rfc3339(item.date),
       })),
     },

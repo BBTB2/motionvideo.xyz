@@ -56,7 +56,8 @@ ${docsPages
 - [Motion catalog](${absoluteUrl("/api/catalog/")}): JSON of every gallery video with its prompt, model, stack, effort, and media URLs.
 - [Directories](${absoluteUrl("/api/catalog/directories")}): JSON of the tools, studios, skills, and extras directories.
 - [Moves](${absoluteUrl("/api/moves/")}): JSON of every move's public fields (no prompts).
-- [OpenAPI](${absoluteUrl(ROUTES.OPENAPI_JSON)}): OpenAPI 3.1 document of the three JSON endpoints above.
+- [Search](${absoluteUrl(ROUTES.DOCS_API)}): query endpoints over the same data: \`/api/catalog/search\` (videos by keywords, categories, models, colours, creators), \`/api/catalog/videos/{slug}\`, \`/api/catalog/directories/search\` and \`/api/catalog/facets\` (every filter value).
+- [OpenAPI](${absoluteUrl(ROUTES.OPENAPI_JSON)}): OpenAPI 3.1 document of every JSON endpoint above.
 - [Changelog feed](${absoluteUrl(ROUTES.CHANGELOG_JSON_FEED)}): JSON Feed of every release with its notes as HTML; also as RSS (${absoluteUrl(ROUTES.CHANGELOG_RSS)}) and Atom (${absoluteUrl(ROUTES.CHANGELOG_ATOM)}).
 - [Blog feed](${absoluteUrl(ROUTES.BLOG_JSON_FEED)}): JSON Feed of every blog post with its text as HTML; also as RSS (${absoluteUrl(ROUTES.BLOG_RSS)}) and Atom (${absoluteUrl(ROUTES.BLOG_ATOM)}).
 

@@ -7,22 +7,25 @@ import { SITE } from "@/constants/site";
 import { absoluteUrl } from "@/constants/url";
 import catalog from "@/data/motion-catalog.json";
 import directories from "@/data/resource-directories.json";
-import { DIRECTORY_FILTERS } from "@/lib/directories";
+import { DIRECTORY_FILTERS, DIRECTORY_SORTS } from "@/lib/directories";
 import {
   EFFORTS,
   ITERATIONS,
   MOTION_CATEGORIES,
+  MOTION_COLORS,
   MOTION_MODELS,
   MOTION_TYPES,
 } from "@/lib/motion-catalog";
 import { MOVE_FAMILIES } from "@/lib/move-families";
 import { MOVES } from "@/lib/moves";
+import { DIRECTORY_SECTIONS } from "@/server/catalog-search";
 
 // Server only: the OpenAPI document of the public JSON endpoints
 // (src/routes/api/catalog/*, src/routes/api/moves), served at /openapi.json
 // and rendered as the API reference under /docs/api. Enums and the
 // Cache-Control value come from the code the handlers use, and the examples
-// are cut from the live data, so they can't drift.
+// are cut from the live data, so they can't drift. The query endpoints
+// (search, video, facets, directory search) live in server/catalog-search.ts.
 //
 // /api/mcp/* is left out: those endpoints are the MCP server's backend. Their
 // access tokens are audience-bound to the MCP server (MCP_RESOURCE), which
@@ -75,6 +78,133 @@ const cachedGet = ({
   },
 });
 
+type ParameterSchema = NonNullable<OpenAPIV3_1.ParameterObject["schema"]>;
+
+/** A list query parameter: comma-separated values or repeated keys. */
+const listParam = (
+  name: string,
+  description: string,
+  items: ParameterSchema
+): OpenAPIV3_1.ParameterObject => ({
+  name,
+  in: "query",
+  required: false,
+  description,
+  style: "form",
+  explode: false,
+  schema: { type: "array", items },
+});
+
+const queryParam = (
+  name: string,
+  description: string,
+  schema: ParameterSchema,
+  required = false
+): OpenAPIV3_1.ParameterObject => ({
+  name,
+  in: "query",
+  required,
+  description,
+  schema,
+});
+
+/** An uncached query: 200 with the result, or 400 for a bad parameter. */
+const queryGet = ({
+  operationId,
+  summary,
+  description,
+  parameters,
+  response,
+  notFound,
+}: {
+  operationId: string;
+  summary: string;
+  description: string;
+  parameters: OpenAPIV3_1.ParameterObject[];
+  response: { description: string; schema: string };
+  notFound?: { description: string; schema: string };
+}): OpenAPIV3_1.PathItemObject => {
+  const responses: NonNullable<
+    NonNullable<OpenAPIV3_1.PathItemObject["get"]>["responses"]
+  > = {
+    "200": {
+      description: response.description,
+      headers: {
+        "Cache-Control": { $ref: "#/components/headers/CacheControl" },
+      },
+      content: { "application/json": { schema: ref(response.schema) } },
+    },
+    "400": {
+      description: "A parameter is unknown or has a value it can't take.",
+      content: {
+        "application/json": { schema: ref("InvalidParameter") },
+      },
+    },
+  };
+  if (notFound) {
+    responses["404"] = {
+      description: notFound.description,
+      content: { "application/json": { schema: ref(notFound.schema) } },
+    };
+  }
+  return {
+    get: {
+      operationId,
+      summary,
+      description,
+      tags: ["Search"],
+      parameters,
+      responses,
+    },
+  };
+};
+
+const COLOR_SLUGS = MOTION_COLORS.map((color) => color.slug);
+const ALL_DIRECTORY_FILTERS = [
+  ...new Set(Object.values(DIRECTORY_FILTERS).flat()),
+];
+const ALL_DIRECTORY_SORTS = [...new Set(Object.values(DIRECTORY_SORTS).flat())];
+const VIDEO_FACETS = ["q", "category", "model", "color", "creator", "type"];
+
+const limitParam = (fallback: number, max: number) =>
+  queryParam(
+    "limit",
+    `Results per page, 1 to ${max}. Defaults to ${fallback}.`,
+    {
+      type: "integer",
+      minimum: 1,
+      maximum: max,
+      default: fallback,
+    }
+  );
+
+const offsetParam = queryParam(
+  "offset",
+  "Results to skip, for the next page. Defaults to 0.",
+  { type: "integer", minimum: 0, default: 0 }
+);
+
+const resolutionSchema = (
+  what: string,
+  extra: Record<string, OpenAPIV3_1.SchemaObject> = {}
+): OpenAPIV3_1.SchemaObject => ({
+  type: "array",
+  description: `How each requested ${what} was read, in request order.`,
+  items: {
+    type: "object",
+    required: ["requested", "matched", ...Object.keys(extra)],
+    properties: {
+      requested: { type: "string", description: "As sent." },
+      matched: {
+        type: "array",
+        description: `The catalog ${what}s it matched; empty when none, which matches no videos.`,
+        items: { type: "string" },
+      },
+      ...extra,
+    },
+  },
+});
+
 const [toolEntry] = directories.tools.entries;
 const skillEntry = directories.tools.entries.find(
   (entry) => entry.category === "Skills"
@@ -102,6 +232,11 @@ export const openApiDocument: OpenAPIV3_1.Document = {
       description: "The gallery videos and the resource directories.",
     },
     { name: "Moves", description: "The motion design moves library." },
+    {
+      name: "Search",
+      description:
+        "Ask instead of downloading: filtered, paginated videos and directory entries, one video in full, and every filter value with its count. Same filters as the site.",
+    },
   ],
   paths: {
     "/api/catalog": cachedGet({
@@ -146,6 +281,127 @@ export const openApiDocument: OpenAPIV3_1.Document = {
         description: "Every move, without its prompt.",
         schema: "Moves",
         example: { moves: MOVES.slice(0, 1) },
+      },
+    }),
+    "/api/catalog/search": queryGet({
+      operationId: "search-videos",
+      summary: "Search the videos",
+      description:
+        "Gallery videos matching every facet given. Several values in one facet are alternatives (`color=red,orange` is red or orange); different facets all apply. The answer says how each model and creator was read, and, when nothing matches several facets, how many videos each matches alone.",
+      parameters: [
+        queryParam(
+          "q",
+          "Keywords; every word must appear in the title, the creator's handle, the prompt or the categories.",
+          { type: "string" }
+        ),
+        listParam("category", "Gallery categories, any of them.", {
+          type: "string",
+          enum: [...MOTION_CATEGORIES],
+        }),
+        listParam(
+          "model",
+          "Models, any of them: a name (`Opus 5.5`), a full name (`Claude Opus 5.5`), a family (`Gemini`) or a bare version (`5.5`, every model with it).",
+          { type: "string" }
+        ),
+        listParam(
+          "color",
+          "Named colours the video contains, matched like the `/color/{color}` pages.",
+          { type: "string", enum: COLOR_SLUGS }
+        ),
+        queryParam(
+          "colorMatch",
+          "With several colours: `any` (default) or `all` of them.",
+          { type: "string", enum: ["any", "all"], default: "any" }
+        ),
+        listParam(
+          "creator",
+          "Creators, any of them: X handles (with or without `@`) or display names, ignoring case.",
+          { type: "string" }
+        ),
+        queryParam("type", "Only videos sharing a prompt, or a skill.", {
+          type: "string",
+          enum: [...MOTION_TYPES],
+        }),
+        queryParam("sort", "By post date. Defaults to `newest`.", {
+          type: "string",
+          enum: ["newest", "oldest"],
+          default: "newest",
+        }),
+        limitParam(12, 50),
+        offsetParam,
+      ],
+      response: {
+        description: "The matching videos, without prompts.",
+        schema: "VideoSearchResult",
+      },
+    }),
+    "/api/catalog/videos/{slug}": queryGet({
+      operationId: "get-video",
+      summary: "Get a video",
+      description:
+        "One gallery video with its prompt or skill, its category, the videos before and after it in that category, and the five most similar videos.",
+      parameters: [
+        {
+          name: "slug",
+          in: "path",
+          required: true,
+          description: "The video's slug.",
+          schema: { type: "string" },
+        },
+      ],
+      response: { description: "The video.", schema: "VideoDetail" },
+      notFound: {
+        description:
+          "No video with that slug. Names the video it duplicated when it was removed as a duplicate, and suggests the creator's other videos.",
+        schema: "VideoNotFound",
+      },
+    }),
+    "/api/catalog/facets": queryGet({
+      operationId: "get-facets",
+      summary: "Get the filters",
+      description:
+        "Every value the search endpoints filter by, with how many videos or entries carry it: video categories (with titles and descriptions), models, colours and types; each directory section's filters, categories and sorts; and the move families.",
+      parameters: [],
+      response: { description: "The filter values.", schema: "Facets" },
+    }),
+    "/api/catalog/directories/search": queryGet({
+      operationId: "search-directory",
+      summary: "Search a directory",
+      description:
+        "Entries of one directory section matching every facet given: tools (filter by pricing), skills (by renderer), creatives (studios and designers, by specialty) or extras (articles and resources, by resource type).",
+      parameters: [
+        queryParam(
+          "section",
+          "The directory section, as in the site's URLs.",
+          { type: "string", enum: [...DIRECTORY_SECTIONS] },
+          true
+        ),
+        queryParam(
+          "q",
+          "Keywords; every word must appear in the name, description, category, renderers or specialties.",
+          { type: "string" }
+        ),
+        listParam(
+          "filter",
+          "The section's facet, any of them: pricing for tools, renderer for skills, specialty for creatives, resource type for extras (see `get-facets`).",
+          { type: "string", enum: ALL_DIRECTORY_FILTERS }
+        ),
+        listParam(
+          "category",
+          "The section's categories, any of them, ignoring case (see `get-facets`).",
+          { type: "string" }
+        ),
+        queryParam(
+          "sort",
+          "One of the section's sorts (see `get-facets`); without one, the site's curated order.",
+          { type: "string", enum: ALL_DIRECTORY_SORTS }
+        ),
+        limitParam(24, 100),
+        offsetParam,
+      ],
+      response: {
+        description: "The matching entries.",
+        schema: "DirectorySearchResult",
       },
     }),
   },
@@ -437,6 +693,311 @@ export const openApiDocument: OpenAPIV3_1.Document = {
             type: "string",
             format: "date-time",
             description: "Articles only: when it was published.",
+          },
+        },
+      },
+      VideoSummary: {
+        type: "object",
+        required: [
+          "slug",
+          "title",
+          "date",
+          "tags",
+          "contentTags",
+          "promptShared",
+          "handle",
+          "avatar",
+          "poster",
+          "preview",
+          "video",
+          "width",
+          "height",
+          "colorNames",
+          "pageUrl",
+        ],
+        description:
+          "A gallery video without its prompt; the fields are those of `MotionVideo`, plus `colorNames` and `pageUrl`.",
+        properties: {
+          slug: { type: "string" },
+          title: { type: "string" },
+          date: { type: "string", format: "date" },
+          tags: {
+            type: "array",
+            items: { type: "string", enum: [...MOTION_TYPES] },
+          },
+          contentTags: {
+            type: "array",
+            items: { type: "string", enum: [...MOTION_CATEGORIES] },
+          },
+          promptShared: { type: "boolean" },
+          handle: { type: "string" },
+          creatorName: { type: "string" },
+          avatar: { type: "string", format: "uri" },
+          poster: { type: "string", format: "uri" },
+          preview: { type: "string", format: "uri" },
+          video: { type: "string", format: "uri" },
+          width: { type: "integer" },
+          height: { type: "integer" },
+          description: { type: "string" },
+          model: { type: "string", enum: [...MOTION_MODELS] },
+          stack: { type: "string" },
+          effort: { type: "string", enum: [...EFFORTS] },
+          iterations: { type: "string", enum: [...ITERATIONS] },
+          colorNames: {
+            type: "array",
+            description: "Named colours the video contains.",
+            items: { type: "string", enum: COLOR_SLUGS },
+          },
+          pageUrl: {
+            type: "string",
+            format: "uri",
+            description: "The video's page in English.",
+          },
+        },
+      },
+      VideoSearchResult: {
+        type: "object",
+        required: ["total", "limit", "offset", "videos", "resolved"],
+        properties: {
+          total: {
+            type: "integer",
+            description: "Matches before paging.",
+          },
+          limit: { type: "integer" },
+          offset: { type: "integer" },
+          videos: { type: "array", items: ref("VideoSummary") },
+          resolved: {
+            type: "object",
+            required: ["models", "creators"],
+            properties: {
+              models: resolutionSchema("model"),
+              creators: resolutionSchema("creator", {
+                similar: {
+                  type: "array",
+                  description:
+                    "With no match: up to five handles containing what was sent.",
+                  items: { type: "string" },
+                },
+              }),
+            },
+          },
+          perFacet: {
+            type: "array",
+            description:
+              "Only with no match and several facets: how many videos each facet matches alone.",
+            items: {
+              type: "object",
+              required: ["facet", "total"],
+              properties: {
+                facet: { type: "string", enum: VIDEO_FACETS },
+                total: { type: "integer" },
+              },
+            },
+          },
+        },
+      },
+      VideoDetail: {
+        description:
+          "A `VideoSummary` plus the prompt, skill, source post, hex colours, category, neighbours and similar videos.",
+        allOf: [
+          ref("VideoSummary"),
+          {
+            type: "object",
+            required: ["neighbours", "similar"],
+            properties: {
+              prompt: { type: "string" },
+              skillUrl: { type: "string", format: "uri" },
+              skillInstall: { type: "string" },
+              tweetUrl: { type: "string", format: "uri" },
+              colors: {
+                type: "array",
+                items: { type: "string", pattern: "^[0-9a-f]{6}$" },
+              },
+              category: {
+                type: "string",
+                enum: [...MOTION_CATEGORIES],
+                description: "The category page the video belongs to.",
+              },
+              categoryUrl: { type: "string", format: "uri" },
+              neighbours: {
+                type: "object",
+                description:
+                  "Slugs of the videos before and after it in its category, newest first.",
+                properties: {
+                  previous: { type: "string" },
+                  next: { type: "string" },
+                },
+              },
+              similar: {
+                type: "array",
+                description: "The five most similar videos, best first.",
+                items: ref("VideoRef"),
+              },
+            },
+          },
+        ],
+      },
+      VideoRef: {
+        type: "object",
+        required: ["slug", "title"],
+        properties: {
+          slug: { type: "string" },
+          title: { type: "string" },
+        },
+      },
+      VideoNotFound: {
+        type: "object",
+        required: ["error", "message", "suggestions"],
+        properties: {
+          error: { type: "string", enum: ["not_found"] },
+          message: { type: "string" },
+          duplicateOf: {
+            type: "string",
+            description:
+              "When the slug was removed as a duplicate: the video it duplicated.",
+          },
+          suggestions: {
+            type: "array",
+            description: "Up to five videos by the same creator.",
+            items: ref("VideoRef"),
+          },
+        },
+      },
+      FacetCount: {
+        type: "object",
+        required: ["id", "count"],
+        properties: {
+          id: { type: "string" },
+          count: { type: "integer" },
+        },
+      },
+      Facets: {
+        type: "object",
+        required: ["videos", "directories", "moves"],
+        properties: {
+          videos: {
+            type: "object",
+            required: [
+              "total",
+              "creators",
+              "categories",
+              "models",
+              "colors",
+              "types",
+              "sorts",
+            ],
+            properties: {
+              total: { type: "integer" },
+              creators: {
+                type: "integer",
+                description: "How many creators have videos.",
+              },
+              categories: {
+                type: "array",
+                items: {
+                  type: "object",
+                  required: ["id", "count", "title", "description", "url"],
+                  properties: {
+                    id: { type: "string", enum: [...MOTION_CATEGORIES] },
+                    count: { type: "integer" },
+                    title: { type: "string" },
+                    description: { type: "string" },
+                    url: { type: "string", format: "uri" },
+                  },
+                },
+              },
+              models: {
+                type: "array",
+                items: {
+                  type: "object",
+                  required: ["id", "count", "fullName", "family"],
+                  properties: {
+                    id: { type: "string", enum: [...MOTION_MODELS] },
+                    count: { type: "integer" },
+                    fullName: { type: "string" },
+                    family: { type: "string" },
+                  },
+                },
+              },
+              colors: {
+                type: "array",
+                items: {
+                  type: "object",
+                  required: ["id", "count", "hex"],
+                  properties: {
+                    id: { type: "string", enum: COLOR_SLUGS },
+                    count: { type: "integer" },
+                    hex: { type: "string", pattern: "^[0-9a-f]{6}$" },
+                  },
+                },
+              },
+              types: { type: "array", items: ref("FacetCount") },
+              sorts: {
+                type: "array",
+                items: { type: "string", enum: ["newest", "oldest"] },
+              },
+            },
+          },
+          directories: {
+            type: "array",
+            items: {
+              type: "object",
+              required: ["section", "total", "filters", "categories", "sorts"],
+              properties: {
+                section: { type: "string", enum: [...DIRECTORY_SECTIONS] },
+                total: { type: "integer" },
+                filters: { type: "array", items: ref("FacetCount") },
+                categories: { type: "array", items: ref("FacetCount") },
+                sorts: {
+                  type: "array",
+                  items: { type: "string", enum: ALL_DIRECTORY_SORTS },
+                },
+              },
+            },
+          },
+          moves: {
+            type: "object",
+            required: ["total", "families"],
+            properties: {
+              total: { type: "integer" },
+              families: {
+                type: "array",
+                items: {
+                  type: "object",
+                  required: ["id", "count"],
+                  properties: {
+                    id: { type: "string", enum: [...MOVE_FAMILIES] },
+                    count: { type: "integer" },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      DirectorySearchResult: {
+        type: "object",
+        required: ["section", "total", "limit", "offset", "entries"],
+        properties: {
+          section: { type: "string", enum: [...DIRECTORY_SECTIONS] },
+          total: { type: "integer", description: "Matches before paging." },
+          limit: { type: "integer" },
+          offset: { type: "integer" },
+          entries: { type: "array", items: ref("DirectoryEntry") },
+        },
+      },
+      InvalidParameter: {
+        type: "object",
+        required: ["error", "parameter", "message"],
+        properties: {
+          error: { type: "string", enum: ["invalid_parameter"] },
+          parameter: { type: "string" },
+          message: { type: "string" },
+          allowed: {
+            type: "array",
+            description:
+              "The values the parameter can take, when it has a fixed set.",
+            items: { type: "string" },
           },
         },
       },

@@ -30,7 +30,7 @@
   "packageManager": "pnpm@10.28.2",
   "pnpm": {
     "overrides": {
-      "@better-auth/oauth-provider": "1.7.6"
+      "@better-auth/oauth-provider": "1.7.25"
     }
   }
 }

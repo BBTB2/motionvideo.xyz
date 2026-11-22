@@ -19,6 +19,11 @@ import { hasLivePlan } from "./plans";
 // the access token here. `requireMcpAuth` checks it is ours, bound to the
 // MCP resource and carries the account scope; `sub` is the user id, and
 // the account's plan (its own, or a Business seat) decides access.
+//
+// Don't pass `jwksUrl` to `requireMcpAuth` here or in the other `/api/mcp/*`
+// routes: without it (@better-auth/mcp ≥ 1.7.23) the signing keys are read
+// in-process. A Worker can't fetch its own custom domain (Cloudflare answers
+// with a 522), so verifying over HTTP failed every signed-in call with a 500.
 
 /** A move with its Pro half: the copy-ready prompt and its parameters. */
 export interface ProMove extends Move {

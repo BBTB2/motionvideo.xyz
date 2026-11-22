@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { getIntlayer } from "intlayer";
 import { useIntlayer, useLocale } from "react-intlayer";
 
+import { ChangelogTags } from "@/components/changelog-tags";
 import { CollectionIntro } from "@/components/collection-intro";
 import { EntryCard } from "@/components/entry-card";
 import { FeedButtons } from "@/components/feed-buttons";
@@ -50,9 +51,12 @@ const Changelog = () => {
             title={entry.data.title}
             description={entry.data.description}
             meta={
-              <time dateTime={entry.data.date}>
-                {formatChangelogDate(entry.data.date, locale)}
-              </time>
+              <>
+                <time dateTime={entry.data.date}>
+                  {formatChangelogDate(entry.data.date, locale)}
+                </time>
+                <ChangelogTags tags={entry.data.tags} />
+              </>
             }
           />
         </li>

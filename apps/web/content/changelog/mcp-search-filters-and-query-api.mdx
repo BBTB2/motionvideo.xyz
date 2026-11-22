@@ -1,0 +1,42 @@
+---
+title: MCP search by model, colour and creator, and a query API
+description: The MCP finds videos by model, colour, category and creator, searches every directory, and lists its filters; signed-in MCP tools work again; and the public API answers searches.
+date: 2026-11-18
+cover: flxrnc-c083a6
+tags:
+  - MCP
+  - API
+---
+
+## Search the gallery from your agent
+
+The [MotionVideo MCP](/motionvideo-mcp) searches videos the way the gallery does. Ask for "Opus 5.5 videos in red or orange" or "product UI videos by @twoclipping" and `search-videos` filters by:
+
+- **Models**, by name (Opus 5.5), full name (Claude Opus 5.5), family (Gemini) or version (5.5 covers Opus 5.5 and Fable 5.5).
+- **Colours**, matched like the [colour pages](/color/red). Several colours mean any of them, or all of them if you ask.
+- **Categories**, **creators** (an X handle or a name) and whether the video shares a prompt or a skill.
+
+Several values in one filter are alternatives, and different filters all apply. Answers say how each filter was read, suggest close matches for a model or creator the catalog doesn't have, and, when nothing matches, how many videos each filter finds on its own. Results come a page at a time.
+
+`get-video` also lists the five videos most like the one you opened.
+
+## Every directory in the MCP
+
+`search-directory` covers all four directories, each with the filter and sort the site has: [tools](/tools) by pricing, [skills](/skills) by renderer and GitHub stars, [creatives](/creatives) by specialty and [extras](/extras) by resource type. `list-filters` lists every category, model, colour and directory filter with counts, so an agent knows what to ask for.
+
+They replace `browse-directory` and `list-categories`. Clients pick up the new tools on their own; if a chat that was already open asks for an old one, start a new chat.
+
+## Signed-in MCP tools work again
+
+For a while, the tools that need a sign-in (`list-bookmarks`, `my-featured` and the Pro tools `search-moves` and `get-move-prompt`) answered every call with an error. That's fixed; there's nothing to do on your side. When a signed-in tool fails now, its message says whether signing in again would help, the plan is missing, or the site is briefly unavailable.
+
+## Search the public API
+
+The [public API](/docs/api) answers questions instead of only serving downloads:
+
+- `/api/catalog/search` finds videos by keywords, categories, models, colours, creators and type, a page at a time.
+- `/api/catalog/videos/{slug}` returns one video with its prompt, its neighbours and similar videos.
+- `/api/catalog/directories/search` searches tools, skills, creatives or extras.
+- `/api/catalog/facets` lists every filter value with its count.
+
+They run the same filters as the gallery and directory pages, and they're in the [OpenAPI document](/openapi.json). A parameter an endpoint doesn't know gets a `400` that names it and lists the values it accepts.

@@ -57,6 +57,8 @@ import { Route as Char123LocaleChar125WelcomeRouteImport } from './routes/{-$loc
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiCatalogIndexRouteImport } from './routes/api/catalog/index'
 import { Route as ApiCatalogDirectoriesRouteImport } from './routes/api/catalog/directories'
+import { Route as ApiCatalogFacetsRouteImport } from './routes/api/catalog/facets'
+import { Route as ApiCatalogSearchRouteImport } from './routes/api/catalog/search'
 import { Route as ApiMcpBookmarksRouteImport } from './routes/api/mcp/bookmarks'
 import { Route as ApiMcpFeaturedRouteImport } from './routes/api/mcp/featured'
 import { Route as ApiMovesIndexRouteImport } from './routes/api/moves/index'
@@ -107,6 +109,8 @@ import { Route as Char123LocaleChar125SponsorshipsNewRouteImport } from './route
 import { Route as Char123LocaleChar125TemplatesIndexRouteImport } from './routes/{-$locale}/templates/index'
 import { Route as Char123LocaleChar125ToolsIndexRouteImport } from './routes/{-$locale}/tools/index'
 import { Route as Char123LocaleChar125ToolsCategoryRouteImport } from './routes/{-$locale}/tools/$category'
+import { Route as ApiCatalogDirectoriesSearchRouteImport } from './routes/api/catalog/directories_.search'
+import { Route as ApiCatalogVideosSlugRouteImport } from './routes/api/catalog/videos/$slug'
 import { Route as ApiMcpMovesIndexRouteImport } from './routes/api/mcp/moves/index'
 import { Route as ApiMcpMovesSlugRouteImport } from './routes/api/mcp/moves/$slug'
 import { Route as Char123LocaleChar125GalleryCategoryCategoryRouteImport } from './routes/{-$locale}/_gallery/category.$category'
@@ -399,6 +403,16 @@ const ApiCatalogIndexRoute = ApiCatalogIndexRouteImport.update({
 const ApiCatalogDirectoriesRoute = ApiCatalogDirectoriesRouteImport.update({
   id: '/api/catalog/directories',
   path: '/api/catalog/directories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCatalogFacetsRoute = ApiCatalogFacetsRouteImport.update({
+  id: '/api/catalog/facets',
+  path: '/api/catalog/facets',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCatalogSearchRoute = ApiCatalogSearchRouteImport.update({
+  id: '/api/catalog/search',
+  path: '/api/catalog/search',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiMcpBookmarksRoute = ApiMcpBookmarksRouteImport.update({
@@ -697,6 +711,17 @@ const Char123LocaleChar125ToolsCategoryRoute =
     path: '/$category',
     getParentRoute: () => Char123LocaleChar125ToolsRoute,
   } as any)
+const ApiCatalogDirectoriesSearchRoute =
+  ApiCatalogDirectoriesSearchRouteImport.update({
+    id: '/api/catalog/directories_/search',
+    path: '/api/catalog/directories/search',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiCatalogVideosSlugRoute = ApiCatalogVideosSlugRouteImport.update({
+  id: '/api/catalog/videos/$slug',
+  path: '/api/catalog/videos/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiMcpMovesIndexRoute = ApiMcpMovesIndexRouteImport.update({
   id: '/api/mcp/moves/',
   path: '/api/mcp/moves/',
@@ -898,6 +923,8 @@ export interface FileRoutesByFullPath {
   '/{-$locale}/welcome': typeof Char123LocaleChar125WelcomeRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/catalog/directories': typeof ApiCatalogDirectoriesRoute
+  '/api/catalog/facets': typeof ApiCatalogFacetsRoute
+  '/api/catalog/search': typeof ApiCatalogSearchRoute
   '/api/mcp/bookmarks': typeof ApiMcpBookmarksRoute
   '/api/mcp/featured': typeof ApiMcpFeaturedRoute
   '/api/webhook/dodo': typeof ApiWebhookDodoRoute
@@ -949,6 +976,8 @@ export interface FileRoutesByFullPath {
   '/{-$locale}/sponsorships/': typeof Char123LocaleChar125SponsorshipsIndexRoute
   '/{-$locale}/templates/': typeof Char123LocaleChar125TemplatesIndexRoute
   '/{-$locale}/tools/': typeof Char123LocaleChar125ToolsIndexRoute
+  '/api/catalog/directories/search': typeof ApiCatalogDirectoriesSearchRoute
+  '/api/catalog/videos/$slug': typeof ApiCatalogVideosSlugRoute
   '/api/mcp/moves/$slug': typeof ApiMcpMovesSlugRoute
   '/{-$locale}/category/$category': typeof Char123LocaleChar125GalleryCategoryCategoryRouteWithChildren
   '/{-$locale}/color/$color': typeof Char123LocaleChar125GalleryColorColorRouteWithChildren
@@ -1013,6 +1042,8 @@ export interface FileRoutesByTo {
   '/{-$locale}/welcome': typeof Char123LocaleChar125WelcomeRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/catalog/directories': typeof ApiCatalogDirectoriesRoute
+  '/api/catalog/facets': typeof ApiCatalogFacetsRoute
+  '/api/catalog/search': typeof ApiCatalogSearchRoute
   '/api/mcp/bookmarks': typeof ApiMcpBookmarksRoute
   '/api/mcp/featured': typeof ApiMcpFeaturedRoute
   '/api/webhook/dodo': typeof ApiWebhookDodoRoute
@@ -1062,6 +1093,8 @@ export interface FileRoutesByTo {
   '/{-$locale}/sponsorships': typeof Char123LocaleChar125SponsorshipsIndexRoute
   '/{-$locale}/templates': typeof Char123LocaleChar125TemplatesIndexRoute
   '/{-$locale}/tools': typeof Char123LocaleChar125ToolsIndexRoute
+  '/api/catalog/directories/search': typeof ApiCatalogDirectoriesSearchRoute
+  '/api/catalog/videos/$slug': typeof ApiCatalogVideosSlugRoute
   '/api/mcp/moves/$slug': typeof ApiMcpMovesSlugRoute
   '/{-$locale}/videos/$slug': typeof Char123LocaleChar125GalleryVideosSlugRoute
   '/{-$locale}/changelog/$slug': typeof Char123LocaleChar125PagesChangelogSlugRoute
@@ -1133,6 +1166,8 @@ export interface FileRoutesById {
   '/{-$locale}/welcome': typeof Char123LocaleChar125WelcomeRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/catalog/directories': typeof ApiCatalogDirectoriesRoute
+  '/api/catalog/facets': typeof ApiCatalogFacetsRoute
+  '/api/catalog/search': typeof ApiCatalogSearchRoute
   '/api/mcp/bookmarks': typeof ApiMcpBookmarksRoute
   '/api/mcp/featured': typeof ApiMcpFeaturedRoute
   '/api/webhook/dodo': typeof ApiWebhookDodoRoute
@@ -1184,6 +1219,8 @@ export interface FileRoutesById {
   '/{-$locale}/sponsorships/': typeof Char123LocaleChar125SponsorshipsIndexRoute
   '/{-$locale}/templates/': typeof Char123LocaleChar125TemplatesIndexRoute
   '/{-$locale}/tools/': typeof Char123LocaleChar125ToolsIndexRoute
+  '/api/catalog/directories_/search': typeof ApiCatalogDirectoriesSearchRoute
+  '/api/catalog/videos/$slug': typeof ApiCatalogVideosSlugRoute
   '/api/mcp/moves/$slug': typeof ApiMcpMovesSlugRoute
   '/{-$locale}/_gallery/category/$category': typeof Char123LocaleChar125GalleryCategoryCategoryRouteWithChildren
   '/{-$locale}/_gallery/color/$color': typeof Char123LocaleChar125GalleryColorColorRouteWithChildren
@@ -1259,6 +1296,8 @@ export interface FileRouteTypes {
     | '/{-$locale}/welcome'
     | '/api/auth/$'
     | '/api/catalog/directories'
+    | '/api/catalog/facets'
+    | '/api/catalog/search'
     | '/api/mcp/bookmarks'
     | '/api/mcp/featured'
     | '/api/webhook/dodo'
@@ -1310,6 +1349,8 @@ export interface FileRouteTypes {
     | '/{-$locale}/sponsorships/'
     | '/{-$locale}/templates/'
     | '/{-$locale}/tools/'
+    | '/api/catalog/directories/search'
+    | '/api/catalog/videos/$slug'
     | '/api/mcp/moves/$slug'
     | '/{-$locale}/category/$category'
     | '/{-$locale}/color/$color'
@@ -1374,6 +1415,8 @@ export interface FileRouteTypes {
     | '/{-$locale}/welcome'
     | '/api/auth/$'
     | '/api/catalog/directories'
+    | '/api/catalog/facets'
+    | '/api/catalog/search'
     | '/api/mcp/bookmarks'
     | '/api/mcp/featured'
     | '/api/webhook/dodo'
@@ -1423,6 +1466,8 @@ export interface FileRouteTypes {
     | '/{-$locale}/sponsorships'
     | '/{-$locale}/templates'
     | '/{-$locale}/tools'
+    | '/api/catalog/directories/search'
+    | '/api/catalog/videos/$slug'
     | '/api/mcp/moves/$slug'
     | '/{-$locale}/videos/$slug'
     | '/{-$locale}/changelog/$slug'
@@ -1493,6 +1538,8 @@ export interface FileRouteTypes {
     | '/{-$locale}/welcome'
     | '/api/auth/$'
     | '/api/catalog/directories'
+    | '/api/catalog/facets'
+    | '/api/catalog/search'
     | '/api/mcp/bookmarks'
     | '/api/mcp/featured'
     | '/api/webhook/dodo'
@@ -1544,6 +1591,8 @@ export interface FileRouteTypes {
     | '/{-$locale}/sponsorships/'
     | '/{-$locale}/templates/'
     | '/{-$locale}/tools/'
+    | '/api/catalog/directories_/search'
+    | '/api/catalog/videos/$slug'
     | '/api/mcp/moves/$slug'
     | '/{-$locale}/_gallery/category/$category'
     | '/{-$locale}/_gallery/color/$color'
@@ -1592,11 +1641,15 @@ export interface RootRouteChildren {
   ChangelogRssDotxmlRoute: typeof ChangelogRssDotxmlRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiCatalogDirectoriesRoute: typeof ApiCatalogDirectoriesRoute
+  ApiCatalogFacetsRoute: typeof ApiCatalogFacetsRoute
+  ApiCatalogSearchRoute: typeof ApiCatalogSearchRoute
   ApiMcpBookmarksRoute: typeof ApiMcpBookmarksRoute
   ApiMcpFeaturedRoute: typeof ApiMcpFeaturedRoute
   ApiWebhookDodoRoute: typeof ApiWebhookDodoRoute
   ApiCatalogIndexRoute: typeof ApiCatalogIndexRoute
   ApiMovesIndexRoute: typeof ApiMovesIndexRoute
+  ApiCatalogDirectoriesSearchRoute: typeof ApiCatalogDirectoriesSearchRoute
+  ApiCatalogVideosSlugRoute: typeof ApiCatalogVideosSlugRoute
   ApiMcpMovesSlugRoute: typeof ApiMcpMovesSlugRoute
   ApiMcpMovesIndexRoute: typeof ApiMcpMovesIndexRoute
 }
@@ -1937,6 +1990,20 @@ declare module '@tanstack/react-router' {
       path: '/api/catalog/directories'
       fullPath: '/api/catalog/directories'
       preLoaderRoute: typeof ApiCatalogDirectoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/catalog/facets': {
+      id: '/api/catalog/facets'
+      path: '/api/catalog/facets'
+      fullPath: '/api/catalog/facets'
+      preLoaderRoute: typeof ApiCatalogFacetsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/catalog/search': {
+      id: '/api/catalog/search'
+      path: '/api/catalog/search'
+      fullPath: '/api/catalog/search'
+      preLoaderRoute: typeof ApiCatalogSearchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/mcp/bookmarks': {
@@ -2288,6 +2355,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/{-$locale}/tools/$category'
       preLoaderRoute: typeof Char123LocaleChar125ToolsCategoryRouteImport
       parentRoute: typeof Char123LocaleChar125ToolsRoute
+    }
+    '/api/catalog/directories_/search': {
+      id: '/api/catalog/directories_/search'
+      path: '/api/catalog/directories/search'
+      fullPath: '/api/catalog/directories/search'
+      preLoaderRoute: typeof ApiCatalogDirectoriesSearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/catalog/videos/$slug': {
+      id: '/api/catalog/videos/$slug'
+      path: '/api/catalog/videos/$slug'
+      fullPath: '/api/catalog/videos/$slug'
+      preLoaderRoute: typeof ApiCatalogVideosSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/mcp/moves/': {
       id: '/api/mcp/moves/'
@@ -2968,11 +3049,15 @@ const rootRouteChildren: RootRouteChildren = {
   ChangelogRssDotxmlRoute: ChangelogRssDotxmlRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiCatalogDirectoriesRoute: ApiCatalogDirectoriesRoute,
+  ApiCatalogFacetsRoute: ApiCatalogFacetsRoute,
+  ApiCatalogSearchRoute: ApiCatalogSearchRoute,
   ApiMcpBookmarksRoute: ApiMcpBookmarksRoute,
   ApiMcpFeaturedRoute: ApiMcpFeaturedRoute,
   ApiWebhookDodoRoute: ApiWebhookDodoRoute,
   ApiCatalogIndexRoute: ApiCatalogIndexRoute,
   ApiMovesIndexRoute: ApiMovesIndexRoute,
+  ApiCatalogDirectoriesSearchRoute: ApiCatalogDirectoriesSearchRoute,
+  ApiCatalogVideosSlugRoute: ApiCatalogVideosSlugRoute,
   ApiMcpMovesSlugRoute: ApiMcpMovesSlugRoute,
   ApiMcpMovesIndexRoute: ApiMcpMovesIndexRoute,
 }

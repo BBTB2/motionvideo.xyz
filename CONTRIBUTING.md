@@ -136,6 +136,8 @@ pnpm build      # production build
 
 `pnpm typecheck` expects `apps/web/.env` to exist because `wrangler types` reads secret names from it. It also regenerates `apps/web/worker-configuration.d.ts`, which is gitignored. Run `pnpm build` when your change touches routing, prerendering, or Cloudflare bindings.
 
+Keep routes that load live D1 data out of `STATIC_PAGES` and the matching unprefixed paths out of `assets.run_worker_first` in `apps/web/wrangler.jsonc`. The build-time Worker does not have a migrated database; for example, `/changelog` loads live sponsor placements at request time.
+
 There is no automated test suite yet. CI runs `pnpm check`, `pnpm typecheck`, and `pnpm build`; include the commands you ran and a short manual verification path in your pull request.
 
 A pre-commit hook via [Lefthook](https://github.com/evilmartians/lefthook) runs `pnpm fix` on staged files.
