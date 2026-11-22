@@ -134,7 +134,7 @@ const VideoLink = ({
 );
 
 /** A creator's photo, or the user glyph when there is none or it fails to load. */
-const CreatorAvatar = ({
+export const CreatorAvatar = ({
   src,
   size,
   className,

@@ -56,7 +56,7 @@ const EXPLORE_ROUTES = [
 
 // The pages under each menu: the product itself, what agents use, and the
 // site's own pages.
-const PRODUCT_LINKS = ["moves", "templates"] as const;
+const PRODUCT_LINKS = ["moves", "templates", "customize"] as const;
 const AI_LINKS = ["mcp", "skill"] as const;
 const RESOURCE_LINKS = [
   "about",
@@ -101,6 +101,7 @@ const panelStyle = {
 const NAV_LINKS = {
   moves: ROUTES.MOVES,
   templates: ROUTES.TEMPLATES,
+  customize: ROUTES.CUSTOMIZE,
   mcp: ROUTES.MOTIONVIDEO_MCP,
   skill: ROUTES.MOTIONVIDEO_SKILL,
   docs: ROUTES.DOCS,
@@ -165,7 +166,11 @@ const useCurrentSection = (): Section => {
   if (inGallery || EXPLORE_PATHS.some(under)) {
     return "explore";
   }
-  if (under(ROUTES.MOVES) || under(ROUTES.TEMPLATES)) {
+  if (
+    under(ROUTES.MOVES) ||
+    under(ROUTES.TEMPLATES) ||
+    under(ROUTES.CUSTOMIZE)
+  ) {
     return "product";
   }
   if (under(ROUTES.MOTIONVIDEO_MCP) || under(ROUTES.MOTIONVIDEO_SKILL)) {
@@ -320,7 +325,7 @@ const DesktopNav = () => {
         icon,
         detail: content.menuNotes[name],
         media: (data) =>
-          name === "moves" || name === "templates"
+          name === "moves" || name === "templates" || name === "customize"
             ? { kind: "video", video: data[name].video }
             : { kind: "icon", icon },
       };

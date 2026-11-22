@@ -110,20 +110,43 @@ export const Route = createFileRoute("/{-$locale}/blog/$slug")({
   },
   head: ({ params }) => {
     const post = findBlogPost(params.slug);
-    return post
+    if (!post) {
+      return createMetadata({ title: "Post not found" });
+    }
+    // The post's cover poster, the same 1200:630 image the list card shows.
+    const cover = pickVideos([post.data.cover], catalog.videos)[
+      post.data.cover
+    ];
+    const image = cover
       ? {
-          ...createMetadata({
-            description: post.data.description,
-            title: post.data.title,
-          }),
-          links: BLOG_FEEDS.links,
-          scripts: [
-            blogPostingJsonLd(
-              { ...post.data, slug: params.slug },
-              params.locale
-            ),
-          ],
+          url: cover.poster,
+          width: String(cover.width),
+          height: String(cover.height),
         }
-      : createMetadata({ title: "Post not found" });
+      : undefined;
+    return {
+      ...createMetadata({
+        description: post.data.description,
+        title: post.data.title,
+      }),
+      ...(image && {
+        meta: [
+          { content: image.url, property: "og:image" },
+          { content: post.data.title, property: "og:image:alt" },
+          { content: image.width, property: "og:image:width" },
+          { content: image.height, property: "og:image:height" },
+          { content: image.url, name: "twitter:image" },
+          { content: post.data.title, name: "twitter:image:alt" },
+        ],
+      }),
+      links: BLOG_FEEDS.links,
+      scripts: [
+        blogPostingJsonLd(
+          { ...post.data, slug: params.slug },
+          params.locale,
+          image?.url
+        ),
+      ],
+    };
   },
 });

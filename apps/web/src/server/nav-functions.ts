@@ -58,6 +58,7 @@ export interface NavPreviews {
   jobs: { count: number; listings: NavJob[] };
   moves: NavShowcase;
   templates: NavShowcase;
+  customize: NavShowcase;
   blog: NavLatest;
   changelog: NavLatest;
 }
@@ -94,6 +95,8 @@ const latest = (
 
 // Discover leads with the gallery's first clip, in its default (curated) order.
 const [leadVideo] = catalog.videos;
+// The customizer starts from a gallery prompt; count and one to preview.
+const promptVideos = catalog.videos.filter((video) => video.prompt);
 
 const STATIC_PREVIEWS = {
   discover: {
@@ -109,6 +112,10 @@ const STATIC_PREVIEWS = {
   templates: {
     count: PROMPT_TEMPLATES.length,
     video: videoBySlug(PROMPT_TEMPLATES[0]?.examples[0]),
+  },
+  customize: {
+    count: promptVideos.length,
+    video: videoBySlug(promptVideos[0]?.slug),
   },
   blog: latest(BLOG_POSTS),
   changelog: latest(CHANGELOG_ENTRIES),

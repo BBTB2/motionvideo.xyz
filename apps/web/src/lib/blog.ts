@@ -27,6 +27,8 @@ const posts = defineCollections({
     date: z.iso.date(),
     /** Gallery video slug whose poster is the post's card image on /blog. */
     cover: z.string(),
+    /** Short topic tags, shown as pills at the top of the post's card. */
+    tags: z.array(z.string()).default([]),
     /**
      * Every gallery video a <Videos> in the post shows. The page loads only
      * these from the catalog; a slug missing here doesn't render.
@@ -48,6 +50,22 @@ export const BLOG_POSTS = blog
 
 /** A loaded blog page, with metadata and a lazily compiled article body. */
 export type BlogPost = (typeof BLOG_POSTS)[number];
+
+/** Every topic tag the posts use, alphabetically, for the category pills. */
+export const BLOG_TAGS = [
+  ...new Set(BLOG_POSTS.flatMap((post) => post.data.tags)),
+].toSorted((a, b) => a.localeCompare(b));
+
+/** A tag's URL slug (lowercased, non-alphanumerics to hyphens). */
+export const blogTagSlug = (tag: string) =>
+  tag
+    .toLowerCase()
+    .trim()
+    .replaceAll(/[^a-z0-9]+/gu, "-");
+
+/** The tag a `/blog/category/$tag` slug names, if it is a known tag. */
+export const findBlogTag = (slug: string | undefined) =>
+  slug ? BLOG_TAGS.find((tag) => blogTagSlug(tag) === slug) : undefined;
 
 /** The blog's feeds, in English like the posts. */
 export const BLOG_FEEDS = defineFeeds(`${SITE.NAME} Blog`, {

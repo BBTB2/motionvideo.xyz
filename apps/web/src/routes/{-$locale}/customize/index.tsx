@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useIntlayer } from "react-intlayer";
-import { Sliders } from "reicon-react/icons/Sliders";
+import { z } from "zod";
 
 import { CollectionGrid } from "@/components/collection-grid";
 import {
@@ -13,7 +13,7 @@ import {
 } from "@/components/collection-toolbar";
 import { FadeScroller } from "@/components/fade-scroller";
 import { LocalizedLink as Link } from "@/components/localized-link";
-import { MotionPreview } from "@/components/motion-video";
+import { CreatorAvatar, MotionPreview } from "@/components/motion-video";
 import { ROUTES } from "@/constants/routes";
 import catalog from "@/data/motion-catalog.json";
 import { useLocalizedNavigate } from "@/hooks/use-localized-navigate";
@@ -31,7 +31,8 @@ const categories = MOTION_CATEGORIES.filter((category) =>
 
 /**
  * One prompt to customize, shown like a gallery card (the clip playing) but
- * opening the customizer, with the title, creator and a "Customize" mark.
+ * opening the customizer: the creator's avatar always, the title and name
+ * revealed on hover.
  */
 const CustomizeCard = ({
   video,
@@ -39,33 +40,31 @@ const CustomizeCard = ({
 }: {
   video: MotionVideo;
   category?: MotionCategory;
-}) => {
-  const gallery = useIntlayer("motion-gallery");
-  return (
-    <Link
-      to={ROUTES.CUSTOMIZE_PROMPT}
-      params={{ slug: video.slug }}
-      search={{ category }}
-      className="group focus-visible:ring-ring relative block overflow-hidden rounded-xl outline-none focus-visible:ring-2"
-    >
-      <MotionPreview video={video} paused={false} />
-      <span className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 rounded-b-xl bg-linear-to-t from-black/70 to-transparent p-3 pt-10 text-white">
-        <span className="flex min-w-0 flex-col gap-0.5">
-          <span className="truncate text-sm font-medium tracking-tight">
-            {video.title}
-          </span>
-          <span className="truncate text-[11px] text-white/70">
-            {video.creatorName ?? `@${video.handle}`}
-          </span>
+}) => (
+  <Link
+    to={ROUTES.CUSTOMIZE_PROMPT}
+    params={{ slug: video.slug }}
+    search={{ category }}
+    className="group focus-visible:ring-ring relative block overflow-hidden rounded-xl outline-none focus-visible:ring-2"
+  >
+    <MotionPreview video={video} paused={false} />
+    {/* Title and creator, revealed over a bottom gradient on hover. */}
+    <span className="pointer-events-none absolute inset-0 flex flex-col justify-end rounded-xl bg-linear-to-t from-black/70 via-transparent to-transparent p-2.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100 [@media(hover:none)]:opacity-100">
+      <span className="flex min-w-0 flex-col pl-8">
+        <span className="truncate text-sm font-medium tracking-tight text-white">
+          {video.title}
         </span>
-        <span className="flex shrink-0 items-center gap-1 rounded-full bg-white/15 px-2 py-1 text-[11px] font-medium backdrop-blur-sm transition-colors group-hover:bg-white/25">
-          <Sliders aria-hidden="true" className="size-3" />
-          {gallery.customize}
+        <span className="truncate text-[11px] text-white/70">
+          {video.creatorName ?? `@${video.handle}`}
         </span>
       </span>
-    </Link>
-  );
-};
+    </span>
+    {/* The creator's avatar, always visible bottom-left. */}
+    <span className="absolute bottom-2.5 left-2.5 size-7 overflow-hidden rounded-full">
+      <CreatorAvatar src={video.avatar} size={28} className="size-full" />
+    </span>
+  </Link>
+);
 
 const CustomizeIndex = () => {
   const content = useIntlayer("customize-page");
@@ -152,8 +151,15 @@ const CustomizeIndex = () => {
   );
 };
 
+interface CustomizeSearch {
+  category?: MotionCategory;
+}
+
 export const Route = createFileRoute("/{-$locale}/customize/")({
   component: CustomizeIndex,
+  validateSearch: (search): CustomizeSearch => ({
+    category: z.enum(MOTION_CATEGORIES).safeParse(search.category).data,
+  }),
   head: () =>
     createMetadata({
       title: "Prompt customizer",

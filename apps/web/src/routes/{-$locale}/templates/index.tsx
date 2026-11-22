@@ -1,67 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useIntlayer } from "react-intlayer";
-import { ArrowRight } from "reicon-react/icons/ArrowRight";
 
 import { CollectionIntro } from "@/components/collection-intro";
+import { EntryCard } from "@/components/entry-card";
 import { ListingGrid } from "@/components/listing-grid";
 import { LocalizedLink as Link } from "@/components/localized-link";
 import { ROUTES } from "@/constants/routes";
 import { PROMPT_TEMPLATES } from "@/lib/prompt-templates";
-import type { PromptTemplate } from "@/lib/prompt-templates";
 import { buttonVariants } from "@/registry/ui/button";
 import { breadcrumbJsonLd } from "@/seo/json-ld";
 import { createMetadata } from "@/seo/metadata";
 import { getTemplateCovers } from "@/server/template-functions";
-import type { TemplateCover } from "@/server/template-functions";
 
-/** One template: its first gallery example's poster, name, summary, fields. */
-const TemplateCard = ({
-  template,
-  cover,
-}: {
-  template: PromptTemplate;
-  cover: TemplateCover | undefined;
-}) => {
-  const content = useIntlayer("templates-page");
-  return (
-    <li className="h-full">
-      <Link
-        to={ROUTES.TEMPLATE}
-        params={{ templateId: template.id }}
-        className="group bg-card shadow-outline hover:bg-muted/60 flex h-full flex-col gap-4 overflow-hidden rounded-xl p-3 transition-colors"
-      >
-        <span className="bg-muted aspect-video w-full shrink-0 overflow-hidden rounded-lg">
-          {cover && (
-            <img
-              src={cover.poster}
-              alt=""
-              width={cover.width}
-              height={cover.height}
-              loading="lazy"
-              className="size-full object-cover"
-            />
-          )}
-        </span>
-        <span className="flex min-w-0 flex-1 flex-col gap-2 py-1">
-          <h2 className="text-lg font-semibold tracking-tight">
-            {template.name}
-          </h2>
-          <span className="text-muted-foreground text-sm text-pretty">
-            {template.summary}
-          </span>
-          <span className="text-muted-foreground mt-auto flex items-center gap-1.5 pt-1 text-xs">
-            {template.fields.length} {content.fieldCount}
-            <ArrowRight
-              aria-hidden="true"
-              className="group-hover:text-foreground ml-auto size-4 transition-colors"
-            />
-          </span>
-        </span>
-      </Link>
-    </li>
-  );
-};
-
+// Laid out like /blog and /changelog: the intro tile first, then a grid of
+// cards (cover, field count, name, summary).
 const Templates = () => {
   const content = useIntlayer("templates-page");
   const sections = useIntlayer("site-header");
@@ -98,11 +50,20 @@ const Templates = () => {
       }
     >
       {PROMPT_TEMPLATES.map((template) => (
-        <TemplateCard
-          key={template.id}
-          template={template}
-          cover={covers[template.id]}
-        />
+        <li key={template.id} className="h-full">
+          <EntryCard
+            to={ROUTES.TEMPLATE}
+            params={{ templateId: template.id }}
+            cover={covers[template.id]}
+            title={template.name}
+            description={template.summary}
+            meta={
+              <span>
+                {template.fields.length} {content.fieldCount}
+              </span>
+            }
+          />
+        </li>
       ))}
     </ListingGrid>
   );

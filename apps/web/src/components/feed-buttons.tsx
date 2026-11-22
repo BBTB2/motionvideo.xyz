@@ -28,7 +28,7 @@ export const FeedButtons = ({ feeds }: { feeds: Feeds }) => {
         href={rss.path}
         type={rss.type}
         data-slot="button"
-        className={buttonVariants({ variant: "secondary" })}
+        className={buttonVariants({ variant: "outline" })}
       >
         <RssIcon data-icon="inline-start" />
         {rss.name}
@@ -37,7 +37,7 @@ export const FeedButtons = ({ feeds }: { feeds: Feeds }) => {
       <DropdownMenu>
         <DropdownMenuTrigger
           aria-label={content.moreFormats.value}
-          className={buttonVariants({ variant: "secondary", size: "icon" })}
+          className={buttonVariants({ variant: "outline", size: "icon" })}
         >
           <ChevronDown aria-hidden="true" />
         </DropdownMenuTrigger>
