@@ -7,7 +7,6 @@ import {
   CollectionToolbar,
 } from "@/components/collection-toolbar";
 import { DIRECTORY_COVER_RATIO } from "@/components/directory-card";
-import { FadeScroller } from "@/components/fade-scroller";
 import { JobCard, NoJobsCard } from "@/components/job-card";
 import { LocalizedLink as Link } from "@/components/localized-link";
 import { SiteFooter } from "@/components/site-footer";
@@ -82,9 +81,9 @@ export const JobsBoard = ({
     <>
       <SiteHeader />
       <CollectionToolbar>
-        <FadeScroller
-          label={content.filterType.value}
-          className="-mx-1 -my-1 min-w-0 basis-full px-1 py-1 lg:basis-[65%]"
+        <nav
+          aria-label={content.filterType.value}
+          className="no-scrollbar scroll-fade-x -mx-1 -my-1 flex min-w-0 basis-full gap-2 overflow-x-auto px-1 py-1 lg:basis-[65%]"
         >
           {[undefined, ...JOB_TYPES].map((value) => (
             <CategoryChip
@@ -97,7 +96,7 @@ export const JobsBoard = ({
               label={value ? content.types[value] : content.all}
             />
           ))}
-        </FadeScroller>
+        </nav>
       </CollectionToolbar>
       <CollectionGrid items={items} />
       <SiteFooter />

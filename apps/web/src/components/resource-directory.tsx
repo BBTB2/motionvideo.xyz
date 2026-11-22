@@ -45,7 +45,6 @@ import {
   DIRECTORY_COVER_RATIO,
   DirectoryCard,
 } from "@/components/directory-card";
-import { FadeScroller } from "@/components/fade-scroller";
 import { SponsoredCard, sponsoredTileIndex } from "@/components/sponsored-card";
 import {
   DropdownMenu,
@@ -361,9 +360,9 @@ export const ResourceDirectory = ({
     <>
       {categories.length > 0 && (
         <CollectionToolbar>
-          <FadeScroller
-            label={content.categories.value}
-            className="-mx-1 -my-1 min-w-0 flex-1 px-1 py-1 lg:flex-none lg:basis-[65%]"
+          <nav
+            aria-label={content.categories.value}
+            className="no-scrollbar scroll-fade-x -mx-1 -my-1 flex min-w-0 flex-1 gap-2 overflow-x-auto px-1 py-1 lg:flex-none lg:basis-[65%]"
           >
             {[undefined, ...categories].map((value) => {
               const selected = value?.slug === category?.slug;
@@ -385,7 +384,7 @@ export const ResourceDirectory = ({
                 />
               );
             })}
-          </FadeScroller>
+          </nav>
           <div className="ml-auto flex shrink-0 items-center">
             <DirectoryFilters
               kind={kind}

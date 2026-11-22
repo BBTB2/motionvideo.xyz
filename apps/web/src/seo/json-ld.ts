@@ -140,10 +140,12 @@ export const faqJsonLd = (locale?: string) =>
   });
 
 // One blog post. Posts are written in English whichever locale serves them;
-// the URL is the page's own localized address (unprefixed in English).
+// the URL is the page's own localized address (unprefixed in English). The
+// post's cover (a 1200:630 card/OG image) is preferred over the site default.
 export const blogPostingJsonLd = (
   post: { slug: string; title: string; description: string; date: string },
-  locale?: string
+  locale?: string,
+  image = absoluteUrl("/og.jpg")
 ) => {
   const url = absoluteUrl(
     localizedPath(`${ROUTES.BLOG}/${post.slug}`, resolveLocale(locale))
@@ -155,7 +157,7 @@ export const blogPostingJsonLd = (
     datePublished: post.date,
     description: post.description,
     headline: post.title,
-    image: absoluteUrl("/og.jpg"),
+    image,
     inLanguage: "en",
     mainEntityOfPage: url,
     publisher: { "@id": ORGANIZATION_ID },

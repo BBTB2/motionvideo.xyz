@@ -11,7 +11,6 @@ import {
   CategoryChip,
   CollectionToolbar,
 } from "@/components/collection-toolbar";
-import { FadeScroller } from "@/components/fade-scroller";
 import { MotionVideoCard, MotionVideoOverlay } from "@/components/motion-video";
 import { SiteHeader } from "@/components/site-header";
 import catalog from "@/data/motion-catalog.json";
@@ -143,9 +142,9 @@ const Film = () => {
     <>
       <SiteHeader />
       <CollectionToolbar label={content.browse.value}>
-        <FadeScroller
-          label={content.filterCategory.value}
-          className="-mx-1 -my-1 min-w-0 flex-1 px-1 py-1 lg:flex-none lg:basis-[65%]"
+        <nav
+          aria-label={content.filterCategory.value}
+          className="no-scrollbar scroll-fade-x -mx-1 -my-1 flex min-w-0 flex-1 gap-2 overflow-x-auto px-1 py-1 lg:flex-none lg:basis-[65%]"
         >
           <CategoryChip to="/film" active={!category} label={content.all} />
           {MOTION_CATEGORIES.map((id) => (
@@ -156,7 +155,7 @@ const Film = () => {
               label={content.categories[id]}
             />
           ))}
-        </FadeScroller>
+        </nav>
       </CollectionToolbar>
       <CollectionGrid items={items} />
       {open && (

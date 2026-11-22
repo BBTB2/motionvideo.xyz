@@ -134,7 +134,7 @@ const VideoLink = ({
 );
 
 /** A creator's photo, or the user glyph when there is none or it fails to load. */
-const CreatorAvatar = ({
+export const CreatorAvatar = ({
   src,
   size,
   className,
@@ -1083,7 +1083,7 @@ const SourceButton = ({ url, slug }: { url: string; slug: string }) => {
   const label = content[action].value;
   let icon = <ArrowRightUp aria-hidden="true" />;
   if (action === "openOnX") {
-    icon = <XIcon aria-hidden="true" className="size-4" />;
+    icon = <XIcon aria-hidden="true" className="size-3.5" />;
   } else if (action === "viewOnGitHub") {
     icon = <GitHubIcon aria-hidden="true" className="size-4" />;
   }

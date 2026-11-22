@@ -16,7 +16,7 @@ export default {
       ru: "Настройщик промптов",
     }),
     intro: t({
-      en: "Pick a prompt, add your subject, colors and size, and turn three dials for creativity, pace and polish. It’s free, and your details stay in your browser.",
+      en: "Pick a prompt, add your subject, colors and size, and turn three dials. It's free, and your details stay in your browser.",
       es: "Elige una instrucción, añade tu tema, colores y tamaño, y ajusta tres controles de creatividad, ritmo y acabado. Es gratis y tus datos se quedan en tu navegador.",
       fr: "Choisissez une instruction, ajoutez votre sujet, vos couleurs et votre format, puis ajustez trois réglages : créativité, rythme et finition. C’est gratuit, et vos informations restent dans votre navigateur.",
       zh: "选择一条提示词，填入你的主题、颜色和尺寸，再调节创意、节奏和精细度三个旋钮。完全免费，你的信息只保存在你的浏览器中。",

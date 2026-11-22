@@ -113,7 +113,7 @@ export const FollowPrompt = () => {
                 "flex-1"
               )}
             >
-              <XIcon aria-hidden="true" className="size-3" />
+              <XIcon aria-hidden="true" className="size-3.5" />
               {content.follow}
             </a>
             <a

@@ -115,7 +115,7 @@ const Testimonials = () => {
               aria-label={`${content.viewOnX.value}: ${entry.name}`}
               className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 shrink-0 rounded-sm transition-colors outline-none focus-visible:ring-3"
             >
-              <XIcon className="size-4" />
+              <XIcon className="size-3.5" />
             </a>
           </div>
           <div className="flex items-center gap-3">

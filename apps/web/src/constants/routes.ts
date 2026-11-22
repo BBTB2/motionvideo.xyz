@@ -8,6 +8,8 @@ export const ROUTES = {
   ADMIN_SPONSORSHIPS: "/admin/sponsorships",
   ADMIN_SUBMISSIONS: "/admin/submissions",
   BLOG: "/blog",
+  // A blog topic's page, e.g. `/blog/category/prompting`.
+  BLOG_CATEGORY: "/blog/category/$tag",
   // The blog's and changelog's feeds. Unprefixed; the file extension keeps
   // the server from redirecting them to a locale.
   BLOG_ATOM: "/blog/atom.xml",

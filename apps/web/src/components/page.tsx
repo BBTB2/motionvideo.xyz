@@ -11,7 +11,8 @@ import { cn } from "@/lib/utils";
 // - `landing`: marketing pages with a hero (MCP, Skill, Sponsor, Pro) and the
 //   hero-headed forms, so every hero title sits at the same height.
 // - `document`: reading pages under a left-aligned `PageHeader` (about, brand,
-//   contact, legal, changelog, blog, templates); the same top as /docs.
+//   contact, legal, blog posts, changelog entries, template pages); the same
+//   top as /docs.
 // - `app`: dense collection and account pages, where the title is chrome.
 // The width is separate: `full` matches the header (collections such as
 // bookmarks), `narrow` centres a reading or form column.

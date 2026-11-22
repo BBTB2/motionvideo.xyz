@@ -129,6 +129,7 @@ import { Route as Char123LocaleChar125GalleryTypeTypeRouteImport } from './route
 import { Route as Char123LocaleChar125GalleryVideosSlugRouteImport } from './routes/{-$locale}/_gallery/videos.$slug'
 import { Route as Char123LocaleChar125PagesChangelogIndexRouteImport } from './routes/{-$locale}/_pages/changelog/index'
 import { Route as Char123LocaleChar125PagesChangelogSlugRouteImport } from './routes/{-$locale}/_pages/changelog/$slug'
+import { Route as Char123LocaleChar125BlogCategoryTagRouteImport } from './routes/{-$locale}/blog/category.$tag'
 import { Route as Char123LocaleChar125DashboardJobsPostRouteImport } from './routes/{-$locale}/dashboard/jobs/post'
 import { Route as Char123LocaleChar125DashboardSponsorshipsIndexRouteImport } from './routes/{-$locale}/dashboard/sponsorships/index'
 import { Route as Char123LocaleChar125DashboardSponsorshipsNewRouteImport } from './routes/{-$locale}/dashboard/sponsorships/new'
@@ -837,6 +838,12 @@ const Char123LocaleChar125PagesChangelogSlugRoute =
     path: '/changelog/$slug',
     getParentRoute: () => Char123LocaleChar125PagesRoute,
   } as any)
+const Char123LocaleChar125BlogCategoryTagRoute =
+  Char123LocaleChar125BlogCategoryTagRouteImport.update({
+    id: '/blog/category/$tag',
+    path: '/blog/category/$tag',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
 const Char123LocaleChar125DashboardJobsPostRoute =
   Char123LocaleChar125DashboardJobsPostRouteImport.update({
     id: '/jobs/post',
@@ -1063,6 +1070,7 @@ export interface FileRoutesByFullPath {
   '/{-$locale}/type/$type': typeof Char123LocaleChar125GalleryTypeTypeRouteWithChildren
   '/{-$locale}/videos/$slug': typeof Char123LocaleChar125GalleryVideosSlugRoute
   '/{-$locale}/changelog/$slug': typeof Char123LocaleChar125PagesChangelogSlugRoute
+  '/{-$locale}/blog/category/$tag': typeof Char123LocaleChar125BlogCategoryTagRoute
   '/{-$locale}/dashboard/jobs/post': typeof Char123LocaleChar125DashboardJobsPostRoute
   '/{-$locale}/dashboard/sponsorships/new': typeof Char123LocaleChar125DashboardSponsorshipsNewRoute
   '/{-$locale}/design/components/$slug': typeof Char123LocaleChar125DesignComponentsSlugRoute
@@ -1184,6 +1192,7 @@ export interface FileRoutesByTo {
   '/api/mcp/moves/$slug': typeof ApiMcpMovesSlugRoute
   '/{-$locale}/videos/$slug': typeof Char123LocaleChar125GalleryVideosSlugRoute
   '/{-$locale}/changelog/$slug': typeof Char123LocaleChar125PagesChangelogSlugRoute
+  '/{-$locale}/blog/category/$tag': typeof Char123LocaleChar125BlogCategoryTagRoute
   '/{-$locale}/dashboard/jobs/post': typeof Char123LocaleChar125DashboardJobsPostRoute
   '/{-$locale}/dashboard/sponsorships/new': typeof Char123LocaleChar125DashboardSponsorshipsNewRoute
   '/{-$locale}/design/components/$slug': typeof Char123LocaleChar125DesignComponentsSlugRoute
@@ -1325,6 +1334,7 @@ export interface FileRoutesById {
   '/{-$locale}/_gallery/type/$type': typeof Char123LocaleChar125GalleryTypeTypeRouteWithChildren
   '/{-$locale}/_gallery/videos/$slug': typeof Char123LocaleChar125GalleryVideosSlugRoute
   '/{-$locale}/_pages/changelog/$slug': typeof Char123LocaleChar125PagesChangelogSlugRoute
+  '/{-$locale}/blog/category/$tag': typeof Char123LocaleChar125BlogCategoryTagRoute
   '/{-$locale}/dashboard/jobs/post': typeof Char123LocaleChar125DashboardJobsPostRoute
   '/{-$locale}/dashboard/sponsorships/new': typeof Char123LocaleChar125DashboardSponsorshipsNewRoute
   '/{-$locale}/design/components/$slug': typeof Char123LocaleChar125DesignComponentsSlugRoute
@@ -1465,6 +1475,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/type/$type'
     | '/{-$locale}/videos/$slug'
     | '/{-$locale}/changelog/$slug'
+    | '/{-$locale}/blog/category/$tag'
     | '/{-$locale}/dashboard/jobs/post'
     | '/{-$locale}/dashboard/sponsorships/new'
     | '/{-$locale}/design/components/$slug'
@@ -1586,6 +1597,7 @@ export interface FileRouteTypes {
     | '/api/mcp/moves/$slug'
     | '/{-$locale}/videos/$slug'
     | '/{-$locale}/changelog/$slug'
+    | '/{-$locale}/blog/category/$tag'
     | '/{-$locale}/dashboard/jobs/post'
     | '/{-$locale}/dashboard/sponsorships/new'
     | '/{-$locale}/design/components/$slug'
@@ -1726,6 +1738,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/_gallery/type/$type'
     | '/{-$locale}/_gallery/videos/$slug'
     | '/{-$locale}/_pages/changelog/$slug'
+    | '/{-$locale}/blog/category/$tag'
     | '/{-$locale}/dashboard/jobs/post'
     | '/{-$locale}/dashboard/sponsorships/new'
     | '/{-$locale}/design/components/$slug'
@@ -2623,6 +2636,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125PagesChangelogSlugRouteImport
       parentRoute: typeof Char123LocaleChar125PagesRoute
     }
+    '/{-$locale}/blog/category/$tag': {
+      id: '/{-$locale}/blog/category/$tag'
+      path: '/blog/category/$tag'
+      fullPath: '/{-$locale}/blog/category/$tag'
+      preLoaderRoute: typeof Char123LocaleChar125BlogCategoryTagRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
     '/{-$locale}/dashboard/jobs/post': {
       id: '/{-$locale}/dashboard/jobs/post'
       path: '/jobs/post'
@@ -3201,6 +3221,7 @@ interface Char123LocaleChar125RouteRouteChildren {
   Char123LocaleChar125DocsIndexRoute: typeof Char123LocaleChar125DocsIndexRoute
   Char123LocaleChar125JobsIndexRoute: typeof Char123LocaleChar125JobsIndexRoute
   Char123LocaleChar125SponsorshipsIndexRoute: typeof Char123LocaleChar125SponsorshipsIndexRoute
+  Char123LocaleChar125BlogCategoryTagRoute: typeof Char123LocaleChar125BlogCategoryTagRoute
 }
 
 const Char123LocaleChar125RouteRouteChildren: Char123LocaleChar125RouteRouteChildren =
@@ -3258,6 +3279,8 @@ const Char123LocaleChar125RouteRouteChildren: Char123LocaleChar125RouteRouteChil
     Char123LocaleChar125JobsIndexRoute: Char123LocaleChar125JobsIndexRoute,
     Char123LocaleChar125SponsorshipsIndexRoute:
       Char123LocaleChar125SponsorshipsIndexRoute,
+    Char123LocaleChar125BlogCategoryTagRoute:
+      Char123LocaleChar125BlogCategoryTagRoute,
   }
 
 const Char123LocaleChar125RouteRouteWithChildren =

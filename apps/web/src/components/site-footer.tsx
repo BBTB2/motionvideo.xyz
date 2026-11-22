@@ -85,7 +85,7 @@ const Socials = () => {
         hint={content.followX}
         tooltip={tooltip}
       >
-        <XIcon className="size-4" />
+        <XIcon className="size-3.5" />
       </IconLink>
       <SharedTooltip handle={tooltip} />
     </TooltipProvider>

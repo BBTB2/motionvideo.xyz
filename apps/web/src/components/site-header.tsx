@@ -56,7 +56,7 @@ const EXPLORE_ROUTES = [
 
 // The pages under each menu: the product itself, what agents use, and the
 // site's own pages.
-const PRODUCT_LINKS = ["moves", "templates"] as const;
+const PRODUCT_LINKS = ["customize", "moves", "templates"] as const;
 const AI_LINKS = ["mcp", "skill"] as const;
 const RESOURCE_LINKS = [
   "about",
@@ -85,7 +85,11 @@ const EXPLORE_PATHS = EXPLORE_ROUTES.flatMap(([, to]) =>
 const MENUS = ["explore", "product", "ai", "resources"] as const;
 type MenuName = (typeof MENUS)[number];
 // The menus that preview their items, and the item each shows when it opens.
-const FIRST_ITEM = { explore: "discover", resources: "about" } as const;
+const FIRST_ITEM = {
+  explore: "discover",
+  product: "customize",
+  resources: "about",
+} as const;
 type PreviewMenuName = keyof typeof FIRST_ITEM;
 
 // Every panel is as tall as the longest list (32px rows, 1px apart, inside
@@ -101,6 +105,7 @@ const panelStyle = {
 const NAV_LINKS = {
   moves: ROUTES.MOVES,
   templates: ROUTES.TEMPLATES,
+  customize: ROUTES.CUSTOMIZE,
   mcp: ROUTES.MOTIONVIDEO_MCP,
   skill: ROUTES.MOTIONVIDEO_SKILL,
   docs: ROUTES.DOCS,
@@ -165,7 +170,11 @@ const useCurrentSection = (): Section => {
   if (inGallery || EXPLORE_PATHS.some(under)) {
     return "explore";
   }
-  if (under(ROUTES.MOVES) || under(ROUTES.TEMPLATES)) {
+  if (
+    under(ROUTES.MOVES) ||
+    under(ROUTES.TEMPLATES) ||
+    under(ROUTES.CUSTOMIZE)
+  ) {
     return "product";
   }
   if (under(ROUTES.MOTIONVIDEO_MCP) || under(ROUTES.MOTIONVIDEO_SKILL)) {
@@ -320,11 +329,26 @@ const DesktopNav = () => {
         icon,
         detail: content.menuNotes[name],
         media: (data) =>
-          name === "moves" || name === "templates"
+          name === "moves" || name === "templates" || name === "customize"
             ? { kind: "video", video: data[name].video }
             : { kind: "icon", icon },
       };
     });
+
+  // Product pages list vertically with their descriptions and share the
+  // preview on the right, like Explore and Resources.
+  const productItems: NavPreviewItem[] = PRODUCT_LINKS.map((name) => {
+    const icon = <SectionIcon section={name} />;
+    return {
+      key: name,
+      link: <TopLink name={name} />,
+      title: content[name],
+      icon,
+      listDetail: content.menuNotes[name],
+      detail: () => content.menuNotes[name],
+      media: (data) => ({ kind: "video", video: data[name].video }),
+    };
+  });
 
   return (
     <NavigationMenu
@@ -334,7 +358,11 @@ const DesktopNav = () => {
         const menu = MENUS.find((name) => name === value) ?? null;
         if (menu && menu !== open) {
           // Each opening starts on the menu's first item.
-          if (menu === "explore" || menu === "resources") {
+          if (
+            menu === "explore" ||
+            menu === "product" ||
+            menu === "resources"
+          ) {
             setActive((current) => ({ ...current, [menu]: FIRST_ITEM[menu] }));
           }
           warm();
@@ -355,8 +383,12 @@ const DesktopNav = () => {
           />
         </NavMenu>
         <NavMenu name="product" current={section === "product"} onWarm={warm}>
-          <NavCardMenu
-            items={cards(PRODUCT_LINKS)}
+          <NavPreviewMenu
+            items={productItems}
+            active={active.product}
+            onActive={(key) =>
+              setActive((current) => ({ ...current, product: key }))
+            }
             previews={previews}
             open={open === "product"}
           />

@@ -44,7 +44,6 @@ import { useIsMac } from "@/hooks/use-mac";
 import { track } from "@/lib/analytics";
 import type { DirectoryEntry, DirectoryKind } from "@/lib/directories";
 import type { MotionVideo } from "@/lib/motion-catalog";
-import type { MOTION_CREATORS } from "@/lib/motion-creators";
 import { setTheme } from "@/lib/theme";
 import { getSearchIndex } from "@/server/search-functions";
 import type { SearchIndex } from "@/server/search-functions";
@@ -66,6 +65,7 @@ type PagePath = (typeof ROUTES)[
   | "MOTIONVIDEO_SKILL"
   | "ABOUT"
   | "BLOG"
+  | "CHANGELOG"
   | "DESIGN"
   | "CONTACT"
   | "PRIVACY"
@@ -77,26 +77,21 @@ type PagePath = (typeof ROUTES)[
 
 interface SearchData {
   videos: MotionVideo[];
-  creators: typeof MOTION_CREATORS;
   directories: Record<DirectoryKind, DirectoryEntry[]>;
 }
 
 const EMPTY_DATA: SearchData = {
   videos: [],
-  creators: [],
   directories: { tool: [], studio: [], skill: [], extra: [] },
 };
 
 const importSearchData = async (): Promise<SearchData> => {
-  // motion-creators reads the same catalog JSON: one chunk for both.
-  const [catalog, creators, directories] = await Promise.all([
+  const [catalog, directories] = await Promise.all([
     import("@/data/motion-catalog.json"),
-    import("@/lib/motion-creators"),
     import("@/lib/directories"),
   ]);
   return {
     videos: catalog.default.videos,
-    creators: creators.MOTION_CREATORS,
     directories: directories.DIRECTORY_ENTRIES,
   };
 };
@@ -173,17 +168,16 @@ interface PaletteGroup {
 // SECTION_ICONS.
 const SEARCH_SCOPES = [
   "videos",
-  "creators",
-  "moves",
-  "templates",
-  "docs",
-  "design",
-  "blog",
-  "changelog",
   "tools",
   "creatives",
   "skills",
   "extras",
+  "moves",
+  "templates",
+  "blog",
+  "design",
+  "changelog",
+  "docs",
 ] as const satisfies readonly Section[];
 
 type SearchScope = (typeof SEARCH_SCOPES)[number];
@@ -344,17 +338,6 @@ export const CommandMenu = () => {
           window.open(entry.url, "_blank", "noopener,noreferrer");
         },
       }));
-    const creators: PaletteItem[] = data.creators.map((creator) => ({
-      id: `creator:${creator.handle}`,
-      label: creator.name,
-      keywords: [creator.name, `@${creator.handle}`, creator.handle],
-      hint: `@${creator.handle}`,
-      action: () =>
-        navigate({
-          to: ROUTES.CREATOR,
-          params: { creator: creator.handle },
-        }),
-    }));
     const moves: PaletteItem[] = index.moves.map((move) => ({
       id: `move:${move.slug}`,
       label: move.name,
@@ -444,14 +427,15 @@ export const CommandMenu = () => {
       ...entry,
       action,
     });
-    // Always visible: Pages, Theme, Socials. Videos, content and directory
-    // entries stay hidden until the user types, but remain searchable via cmdk
-    // filtering.
+    // Always visible: Explore, Product, Resources, Docs, Agents, Theme,
+    // Socials. Videos, content and directory entries stay hidden until the
+    // user types, but remain searchable via cmdk filtering.
     const visible: PaletteGroup[] = [
       {
-        // The header's Explore sections, after a random video.
+        // The header's Explore sections, after a random video. Creators are
+        // searchable inside videos, so there's no separate Creatives link.
         id: "go-to",
-        heading: content.goTo.value,
+        heading: header.explore.value,
         items: [
           {
             id: "go-to:surprise",
@@ -476,13 +460,75 @@ export const CommandMenu = () => {
             "discover",
           ]),
           page(ROUTES.TOOLS, header.tools.value, "tools"),
-          page(ROUTES.CREATIVES, header.creatives.value, "creatives"),
           page(ROUTES.SKILLS, header.skills.value, "skills"),
           page(ROUTES.EXTRAS, header.extras.value, "extras"),
           page(ROUTES.JOBS, header.jobs.value, "jobs", [
             "hiring",
             "career",
             "work",
+          ]),
+        ],
+      },
+      {
+        // The header's Product section: the customizer, Moves, Templates and Docs.
+        id: "product",
+        heading: header.product.value,
+        items: [
+          page(ROUTES.CUSTOMIZE, content.customize.value, "customize", [
+            "prompt",
+            "customize",
+            "personalize",
+          ]),
+          page(ROUTES.MOVES, header.moves.value, "moves", [
+            "techniques",
+            "prompts",
+            "easing",
+          ]),
+          page(ROUTES.TEMPLATES, header.templates.value, "templates", [
+            "prompt",
+            "template",
+            "pro",
+          ]),
+          page(ROUTES.DOCS, header.docs.value, "docs", [
+            "documentation",
+            "quickstart",
+            "api",
+            "SKILL.md",
+          ]),
+        ],
+      },
+      {
+        // The header's Resources section.
+        id: "resources",
+        heading: header.resources.value,
+        items: [
+          page(ROUTES.ABOUT, footer.about.value, "about"),
+          ...(hasQuery
+            ? []
+            : [page(ROUTES.DESIGN, content.design.value, "design")]),
+          page(ROUTES.BLOG, header.blog.value, "blog", ["articles", "guides"]),
+          page(ROUTES.CHANGELOG, header.changelog.value, "changelog"),
+          page(ROUTES.CONTACT, footer.contact.value, "contact"),
+          page(ROUTES.SPONSOR, footer.sponsor.value, "sponsor"),
+        ],
+      },
+      {
+        // Legal pages, grouped as in the footer.
+        id: "legal",
+        heading: footer.legal.value,
+        items: [
+          page(ROUTES.TERMS, footer.terms.value, "terms"),
+          page(ROUTES.PRIVACY, footer.privacy.value, "privacy"),
+          page(ROUTES.REFUNDS, footer.refunds.value, "refunds"),
+          page(
+            ROUTES.SUBPROCESSORS,
+            footer.subprocessors.value,
+            "subprocessors"
+          ),
+          page(ROUTES.SECURITY, footer.security.value, "security"),
+          page(ROUTES.DPA, footer.dpa.value, "dpa", [
+            "gdpr",
+            "data processing",
           ]),
         ],
       },
@@ -506,7 +552,7 @@ export const CommandMenu = () => {
           ]),
           {
             id: "agents:design-md",
-            label: "design.md",
+            label: "DESIGN.md",
             keywords: [
               "design",
               "design system",
@@ -521,6 +567,16 @@ export const CommandMenu = () => {
             },
           },
           {
+            id: "agents:skill-md",
+            label: "SKILL.md",
+            keywords: ["skill", "SKILL.md", "agents", "markdown", "ai"],
+            icon: <DocumentCode aria-hidden="true" />,
+            // A server route, not an app page: a full document load.
+            action: () => {
+              window.location.assign(ROUTES.SKILL_MD);
+            },
+          },
+          {
             id: "agents:llms-txt",
             label: "llms.txt",
             keywords: ["llms", "llms.txt", "agents", "markdown", "ai"],
@@ -530,53 +586,6 @@ export const CommandMenu = () => {
               window.location.assign(ROUTES.LLMS_TXT);
             },
           },
-        ],
-      },
-      {
-        id: "pages",
-        heading: content.pages.value,
-        items: [
-          page(ROUTES.MOVES, header.moves.value, "moves", [
-            "techniques",
-            "prompts",
-            "easing",
-          ]),
-          page(ROUTES.TEMPLATES, header.templates.value, "templates", [
-            "prompt",
-            "template",
-            "pro",
-          ]),
-          page(ROUTES.CUSTOMIZE, content.customize.value, "customize", [
-            "prompt",
-            "customize",
-            "personalize",
-          ]),
-          page(ROUTES.DOCS, header.docs.value, "docs", [
-            "documentation",
-            "quickstart",
-            "api",
-            "skill.md",
-          ]),
-          ...(hasQuery
-            ? []
-            : [page(ROUTES.DESIGN, content.design.value, "design")]),
-          page(ROUTES.ABOUT, footer.about.value, "about"),
-          page(ROUTES.BLOG, header.blog.value, "blog", ["articles", "guides"]),
-          page(ROUTES.CONTACT, footer.contact.value, "contact"),
-          page(ROUTES.SPONSOR, footer.sponsor.value, "sponsor"),
-          page(ROUTES.TERMS, footer.terms.value, "terms"),
-          page(ROUTES.PRIVACY, footer.privacy.value, "privacy"),
-          page(ROUTES.REFUNDS, footer.refunds.value, "refunds"),
-          page(
-            ROUTES.SUBPROCESSORS,
-            footer.subprocessors.value,
-            "subprocessors"
-          ),
-          page(ROUTES.SECURITY, footer.security.value, "security"),
-          page(ROUTES.DPA, footer.dpa.value, "dpa", [
-            "gdpr",
-            "data processing",
-          ]),
         ],
       },
       {
@@ -653,7 +662,7 @@ export const CommandMenu = () => {
             id: "other:x",
             label: "X/Twitter",
             keywords: ["x", "twitter", "follow"],
-            icon: <XIcon className="size-4" />,
+            icon: <XIcon className="size-3.5" />,
             action: () => {
               window.open(LINK.X, "_blank", "noopener,noreferrer");
             },
@@ -666,7 +675,6 @@ export const CommandMenu = () => {
     }
     const searchItems: Record<SearchScope, PaletteItem[]> = {
       videos,
-      creators,
       moves,
       templates,
       docs,

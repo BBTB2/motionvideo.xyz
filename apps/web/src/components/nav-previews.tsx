@@ -45,6 +45,8 @@ export interface NavPreviewItem {
   title: ReactNode;
   /** Before the title in the list. */
   icon: ReactNode;
+  /** A description shown under the title in the list (e.g. the Product menu). */
+  listDetail?: ReactNode;
   /** Shown beside the title in the list once the previews load. */
   count?: (data: NavPreviews) => number;
   /** The caption's second line. */
@@ -260,16 +262,30 @@ export const NavPreviewMenu = ({
     <div className="grid size-full grid-cols-2 gap-1">
       <ul className="flex min-w-0 flex-col gap-px">
         {items.map((item) => (
-          <li key={item.key}>
+          <li key={item.key} className={item.listDetail ? "flex flex-1" : ""}>
             <NavigationMenuLink
               render={item.link}
               data-previewing={item.key === shown?.key ? "" : undefined}
               onPointerEnter={() => onActive(item.key)}
               onFocus={() => onActive(item.key)}
-              className="text-muted-foreground data-previewing:bg-nav-hover data-previewing:text-foreground rounded-lg px-3 font-medium whitespace-nowrap transition-colors"
+              className={cn(
+                "text-muted-foreground data-previewing:bg-nav-hover data-previewing:text-foreground w-full rounded-lg px-3 py-1.5 font-medium transition-colors",
+                item.listDetail
+                  ? "h-full items-start"
+                  : "h-auto min-h-8 items-center"
+              )}
             >
-              {item.icon}
-              <span className="truncate">{item.title}</span>
+              <span className={cn("shrink-0", item.listDetail && "mt-0.5")}>
+                {item.icon}
+              </span>
+              <span className="flex min-w-0 flex-1 flex-col">
+                <span className="truncate">{item.title}</span>
+                {item.listDetail && (
+                  <span className="text-muted-foreground line-clamp-2 text-xs font-normal">
+                    {item.listDetail}
+                  </span>
+                )}
+              </span>
               {previews && (
                 <Suspense fallback={null}>
                   <ItemCount item={item} previews={previews} />

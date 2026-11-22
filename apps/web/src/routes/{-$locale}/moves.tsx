@@ -14,7 +14,6 @@ import {
   CategoryChip,
   CollectionToolbar,
 } from "@/components/collection-toolbar";
-import { FadeScroller } from "@/components/fade-scroller";
 import { LocalizedLink as Link } from "@/components/localized-link";
 import { MoveCard, MovesGridContext } from "@/components/moves";
 import { SiteFooter } from "@/components/site-footer";
@@ -95,9 +94,9 @@ const Moves = () => {
     <>
       <SiteHeader />
       <CollectionToolbar label={content.browse.value}>
-        <FadeScroller
-          label={content.families.value}
-          className="-mx-1 -my-1 min-w-0 flex-1 px-1 py-1"
+        <nav
+          aria-label={content.families.value}
+          className="no-scrollbar scroll-fade-x -mx-1 -my-1 flex min-w-0 flex-1 gap-2 overflow-x-auto px-1 py-1"
         >
           <CategoryChip
             to={ROUTES.MOVES}
@@ -122,7 +121,7 @@ const Moves = () => {
               />
             )
           )}
-        </FadeScroller>
+        </nav>
       </CollectionToolbar>
       <CollectionGrid items={items} />
       <MovesGridContext value={family}>
