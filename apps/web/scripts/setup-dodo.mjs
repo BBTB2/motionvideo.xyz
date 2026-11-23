@@ -4,12 +4,12 @@
 // the rest (and replaces a product whose price changed).
 //
 //   pnpm dodo:setup            test mode (DODO_PAYMENTS_API_KEY), writes IDs to .env
-//   pnpm dodo:setup --live     live mode (DODO_PAYMENTS_LIVE_API_KEY), writes IDs to wrangler.jsonc
+//   pnpm dodo:setup --live     live mode (DODO_PAYMENTS_LIVE_API_KEY), writes IDs to cloudflare.config.ts
 //   pnpm dodo:setup --test-webhook-url=https://<tunnel>/api/webhook/dodo
 //                              also registers a test-mode webhook at a public tunnel URL
-//   pnpm -s dodo:setup --live --print-secret=webhook-key | pnpm wrangler secret put DODO_PAYMENTS_WEBHOOK_KEY
-//   pnpm -s dodo:setup --live --print-secret=api-key | pnpm wrangler secret put DODO_PAYMENTS_API_KEY
-//                              pipe a live secret straight into wrangler without displaying it
+//   pnpm -s dodo:setup --live --print-secret=webhook-key | pnpm cf workers secrets update DODO_PAYMENTS_WEBHOOK_KEY --worker motionvideo --text "$(cat)"
+//   pnpm -s dodo:setup --live --print-secret=api-key | pnpm cf workers secrets update DODO_PAYMENTS_API_KEY --worker motionvideo --text "$(cat)"
+//                              pipe a live secret straight into cf without displaying it
 //
 // Progress goes to stderr; stdout carries only a secret requested with
 // --print-secret. Other brands in the business are never modified.
@@ -21,7 +21,7 @@ import DodoPayments from "dodopayments";
 import { upcomingOffers } from "../src/lib/offers.ts";
 
 const ENV_FILE = ".env";
-const WRANGLER_FILE = "wrangler.jsonc";
+const CONFIG_FILE = "cloudflare.config.ts";
 const SITE_URL = "https://motionvideo.xyz";
 const LIVE_WEBHOOK_URL = `${SITE_URL}/api/webhook/dodo`;
 const GITHUB_REPO = "motionvideohq/motionvideo-skill";
@@ -441,19 +441,22 @@ if (webhookUrl) {
 const ids = productIds;
 
 if (live) {
-  // Non-secret production config lives in wrangler.jsonc `vars`.
-  let wrangler = readFileSync(WRANGLER_FILE, "utf-8");
+  // Non-secret production config lives in cloudflare.config.ts `productionVars`.
+  let config = readFileSync(CONFIG_FILE, "utf-8");
   for (const [key, value] of Object.entries(ids)) {
-    const pattern = new RegExp(`("${key}":\\s*)"[^"]*"`, "u");
-    if (!pattern.test(wrangler)) {
-      throw new Error(`Add "${key}" to vars in ${WRANGLER_FILE}`);
+    const pattern = new RegExp(
+      `(${key}:\\s*bindings\\.text\\(\\s*)"[^"]*"`,
+      "u"
+    );
+    if (!pattern.test(config)) {
+      throw new Error(`Add "${key}" to productionVars in ${CONFIG_FILE}`);
     }
-    wrangler = wrangler.replace(pattern, `$1"${value}"`);
+    config = config.replace(pattern, `$1"${value}"`);
   }
-  writeFileSync(WRANGLER_FILE, wrangler);
-  log(`\nWrote live IDs to ${WRANGLER_FILE} vars.`);
+  writeFileSync(CONFIG_FILE, config);
+  log(`\nWrote live IDs to ${CONFIG_FILE} productionVars.`);
 } else {
-  // Local development overrides wrangler.jsonc vars from .env.
+  // Local development overrides cloudflare.config.ts vars from .env.
   const values = { DODO_PAYMENTS_ENVIRONMENT: "test_mode", ...ids };
   let file = existsSync(ENV_FILE) ? readFileSync(ENV_FILE, "utf-8") : "";
   const currentKey = file.match(/^DODO_PAYMENTS_WEBHOOK_KEY=(?<key>.+)$/mu)
@@ -486,7 +489,7 @@ log(`  webhook endpoint               ${webhookId ?? "not created"}`);
 if (live) {
   log(
     "\nSet the production secrets (values are piped, never displayed):\n" +
-      "  pnpm -s dodo:setup --live --print-secret=api-key | pnpm wrangler secret put DODO_PAYMENTS_API_KEY\n" +
-      "  pnpm -s dodo:setup --live --print-secret=webhook-key | pnpm wrangler secret put DODO_PAYMENTS_WEBHOOK_KEY"
+      '  pnpm -s dodo:setup --live --print-secret=api-key | pnpm cf workers secrets update DODO_PAYMENTS_API_KEY --worker motionvideo --text "$(cat)"\n' +
+      '  pnpm -s dodo:setup --live --print-secret=webhook-key | pnpm cf workers secrets update DODO_PAYMENTS_WEBHOOK_KEY --worker motionvideo --text "$(cat)"'
   );
 }

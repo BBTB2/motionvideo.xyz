@@ -8,12 +8,12 @@ How MotionVideo sends email: which provider sends what, from which address, whic
 | --- | --- |
 | Provider | Resend, one team shared with shadcn-labs.com (Free plan) |
 | Resend domains | `shadcn-labs.com`, `motionvideo.xyz` (2 of the 3 the Free plan allows) |
-| Sender | Every app email goes out as `"Aniket @ MotionVideo" <hello@motionvideo.xyz>` (`EMAIL_FROM` in `apps/web/wrangler.jsonc`) |
+| Sender | Every app email goes out as `"Aniket @ MotionVideo" <hello@motionvideo.xyz>` (`EMAIL_FROM` in `apps/web/cloudflare.config.ts`) |
 | Code | One seam, `sendEmail()` in `apps/web/src/server/email.ts`; React Email templates in `apps/web/src/emails` (`_layout.tsx`, `sign-in.tsx`, `welcome.tsx`, `pro-launch.tsx`) |
 | Inbound | `hello@motionvideo.xyz` (Cloudflare Email Routing to the personal inbox) |
 | Contacts | Every account synced into the Resend segment "MotionVideo users" by `pnpm resend:setup` (2026-11-12). Disclosed under "Product emails" on the privacy page; every marketing email carries the unsubscribe link |
 | Settings toggle | "MotionVideo updates" on `/dashboard/settings` is a stub: `useEmailUpdates` keeps it in `localStorage` only |
-| Scheduled work | Daily Cron Trigger (`0 3 * * *`, `apps/web/wrangler.jsonc`) runs `scheduled()` in `src/server.ts`, which deletes expired sessions and sign-in codes (`src/server/cleanup.ts`) |
+| Scheduled work | Daily Cron Trigger (`0 3 * * *`, `apps/web/cloudflare.config.ts`) runs `scheduled()` in `src/server.ts`, which deletes expired sessions and sign-in codes (`src/server/cleanup.ts`) |
 | Pro launch | `pnpm resend:setup` (`apps/web/scripts/setup-resend.mjs`) syncs accounts into the Resend segment "MotionVideo users", uploads `pro-launch.tsx` as the template "MotionVideo Pro launch", and creates a draft Broadcast (not sent). Run 2026-11-12; rerun to add new accounts |
 | Account deletion | Self-serve from Settings (`src/server/account-functions.ts`); also deletes the Resend Contact |
 
@@ -274,7 +274,7 @@ Each phase ships on its own.
 **Phase 1: domains and transactional on Cloudflare**
 
 - [ ] Onboard `motionvideo.xyz` for Email Sending in Cloudflare (same zone, DNS added automatically).
-- [ ] Add the `send_email` binding in `wrangler.jsonc` (prod and preview), and switch `sendEmail()` to it.
+- [ ] Add the `sendEmail` binding in `cloudflare.config.ts` (prod and preview), and switch `sendEmail()` to it.
 - [ ] Change the sender to `account@motionvideo.xyz`.
 - [ ] Switch on a quiet day; watch sending logs for 24h.
 - [ ] Add `updates.motionvideo.xyz` in Resend (tracking on, DMARC).
