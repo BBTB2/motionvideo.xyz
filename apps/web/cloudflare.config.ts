@@ -187,7 +187,8 @@ const previewWorker = (name: string) => ({
   assets: {
     runWorkerFirst: RUN_WORKER_FIRST,
   },
-  triggers: [triggers.scheduled({ schedule: "0 3 * * *" })],
+  // Previews do not support triggers, so the cleanup cron only runs in
+  // production.
   env: previewEnv(name),
   exports: {
     Presence: exports.durableObject({ storage: "sqlite" }),
