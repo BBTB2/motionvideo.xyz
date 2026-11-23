@@ -235,7 +235,7 @@ export default {
       withOAuthCors(request, withOffer(request, await route(request)))
     );
   },
-  // Daily Cron Trigger (wrangler.jsonc `triggers`).
+  // Daily Cron Trigger (cloudflare.config.ts `triggers`).
   async scheduled() {
     await deleteExpiredAuthRows();
   },

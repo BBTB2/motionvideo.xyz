@@ -28,9 +28,9 @@ Most integrations are optional in development:
 
 - An empty `RESEND_API_KEY` prints emails to the dev server console.
 - Empty payment, Turnstile, Google, and PostHog keys disable those features.
-- `apps/web/wrangler.jsonc` holds the non-secret production defaults; `.env` overrides them locally.
+- `apps/web/cloudflare.config.ts` holds the non-secret production defaults; `.env` overrides them locally.
 
-Production secrets are set with `pnpm --filter @motionvideo/web exec wrangler secret put <NAME>` and are not needed for local development.
+Production secrets are set with `pnpm --filter @motionvideo/web exec cf workers secrets update <NAME> --worker motionvideo --text "$(cat)"` and are not needed for local development.
 
 ### Local database
 
@@ -53,7 +53,7 @@ pnpm --filter @motionvideo/web db:migrate:local
 pnpm --filter @motionvideo/web auth:schema
 ```
 
-Local Cloudflare bindings (D1, R2, Durable Objects, rate limiters) are emulated by the Cloudflare Vite plugin, so `pnpm dev` does not need a Cloudflare account. Wrangler stores local state in `apps/web/.wrangler`, which is gitignored.
+Local Cloudflare bindings (D1, R2, Durable Objects, rate limiters) are emulated by the Cloudflare Vite plugin, so `pnpm dev` does not need a Cloudflare account. `cf` stores local state in `apps/web/.cloudflare`, which is gitignored.
 
 ### Cloudflare preview database
 
@@ -81,12 +81,12 @@ This targets preview only. If the preview already hit a database error during Be
 | --- | --- |
 | `pnpm dev` | Start the site on port 3000 |
 | `pnpm build` | Production build of the site |
-| `pnpm typecheck` | `wrangler types` + `tsc --noEmit` for both workspaces |
+| `pnpm typecheck` | `cf workers types` + `tsc --noEmit` for both workspaces |
 | `pnpm check` | Lint and format check (Ultracite) |
 | `pnpm fix` | Auto-fix lint and format issues |
 | `pnpm studio` | Open the Remotion project in Remotion Studio |
 | `pnpm --filter @motionvideo/web email:dev` | Preview React Email templates on port 3001 |
-| `pnpm deploy` | Build, migrate the remote D1 database, and deploy with Wrangler |
+| `pnpm deploy` | Build, migrate the remote D1 database, and deploy with cf |
 
 `pnpm deploy` and the remote database commands touch production Cloudflare resources. Maintainers run them; contributors should not need them. GitHub Actions only runs checks; it does not deploy.
 
@@ -140,13 +140,13 @@ The video commands are separate from the website build.
 ```bash
 pnpm check      # lint and format check (Ultracite)
 pnpm fix        # auto-fix lint and format issues
-pnpm typecheck  # wrangler types + tsc --noEmit, both packages
+pnpm typecheck  # cf workers types + tsc --noEmit, both packages
 pnpm build      # production build
 ```
 
-`pnpm typecheck` expects `apps/web/.env` to exist because `wrangler types` reads secret names from it. It also regenerates `apps/web/worker-configuration.d.ts`, which is gitignored. Run `pnpm build` when your change touches routing, prerendering, or Cloudflare bindings.
+`pnpm typecheck` generates `apps/web/.cloudflare/types/index.d.ts` from the bindings and secrets declared in `apps/web/cloudflare.config.ts`; the directory is gitignored. Run `pnpm build` when your change touches routing, prerendering, or Cloudflare bindings.
 
-Keep routes that load live D1 data out of `STATIC_PAGES` and the matching unprefixed paths out of `assets.run_worker_first` in `apps/web/wrangler.jsonc`. The build-time Worker does not have a migrated database; for example, `/changelog` loads live sponsor placements at request time.
+Keep routes that load live D1 data out of `STATIC_PAGES` and the matching unprefixed paths out of `assets.runWorkerFirst` in `apps/web/cloudflare.config.ts`. The build-time Worker does not have a migrated database; for example, `/changelog` loads live sponsor placements at request time.
 
 There is no automated test suite yet. CI runs `pnpm check`, `pnpm typecheck`, and `pnpm build`; include the commands you ran and a short manual verification path in your pull request.
 

@@ -8,7 +8,7 @@ import { session, verification } from "./db/schema";
  * Deletes expired sessions (with their IP address and user agent) and expired
  * sign-in codes. Better Auth only drops an expired session when its own
  * cookie comes back, so abandoned ones would otherwise stay forever. Run
- * daily by the Cron Trigger in wrangler.jsonc.
+ * daily by the Cron Trigger in cloudflare.config.ts.
  */
 export const deleteExpiredAuthRows = async () => {
   const db = drizzle(env.DB);

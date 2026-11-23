@@ -74,18 +74,18 @@ const users = () => {
     "pnpm",
     [
       "-s",
-      "wrangler",
+      "exec",
+      "cf",
       "d1",
-      "execute",
-      "DB",
-      "--remote",
-      "--json",
-      "--command",
+      "query",
+      // Production database; `cf d1 query` takes IDs, not binding names.
+      "c44471e8-d7d2-4005-8f95-1e12f0ee0ae8",
+      "--sql",
       "SELECT email, name FROM user ORDER BY created_at",
     ],
     { encoding: "utf-8" }
   );
-  return JSON.parse(out)[0].results;
+  return JSON.parse(out);
 };
 
 const ensureSegment = async () => {

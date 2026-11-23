@@ -2,6 +2,8 @@
 
 Plan for moving MotionVideo's backend out of the TanStack Start app (`apps/web`) into its own Cloudflare Worker (`apps/api`) built on [Hono](https://hono.dev). `apps/web` becomes a backend-for-frontend (BFF): it renders pages and calls the API; the API owns data, auth, payments, uploads, and the MCP surface.
 
+> Updated after the `cf` migration: projects now use `cloudflare.config.ts` instead of `wrangler.jsonc`. The Wrangler-format snippets in this plan are historical; translate them to the `bindings`/`triggers` builders in `cf/config`.
+
 ## Why
 
 - **One backend for every client.** The site, the MCP server, scripts, and webhooks talk to one API with one contract instead of TanStack server functions that only the site can call.
@@ -13,7 +15,7 @@ What it does **not** buy: page speed. Page loaders already run next to D1; after
 
 ## Where we are
 
-One Worker, `motionvideo` (`apps/web/wrangler.jsonc`), on `motionvideo.xyz` (custom domain; `www.` redirects to the apex).
+One Worker, `motionvideo` (`apps/web/cloudflare.config.ts`), on `motionvideo.xyz` (custom domain; `www.` redirects to the apex).
 
 | Piece | Today |
 | --- | --- |
@@ -22,7 +24,7 @@ One Worker, `motionvideo` (`apps/web/wrangler.jsonc`), on `motionvideo.xyz` (cus
 | API routes | `/api/auth/$` (Better Auth), `/api/catalog`, `/api/catalog/directories`, `/api/upload`, `/api/webhook/dodo` |
 | Durable Object | `Presence` (live visitors, one instance named `site`) |
 | Bindings | `DB` (D1), `UPLOADS` (R2), `PRESENCE` (DO), `CONTACT_LIMITER`, `UPLOAD_LIMITER` (rate limits), `ASSETS`; preview env mirrors them |
-| Data | Drizzle schemas in `src/server/db/*`, migrations in `apps/web/drizzle`, applied with `wrangler d1 migrations apply` |
+| Data | Drizzle schemas in `src/server/db/*`, migrations in `apps/web/drizzle`, applied with `cf d1 migrations apply --dir drizzle` |
 | Email | React Email templates in `src/emails`, sent through Resend from `src/server/email.ts` |
 
 Server functions by file:
@@ -57,7 +59,7 @@ flowchart LR
 2. **Machines go straight to `api.motionvideo.xyz`.** MCP, Dodo webhooks, and catalog consumers hit the API Worker directly (custom domain on `apps/api`) and never boot the SSR bundle. `motionvideo.xyz/api/catalog` keeps working through the forward, so existing consumers don't break.
 3. **The API owns every stateful binding.** `DB`, `UPLOADS`, `PRESENCE`, both rate limiters, all secrets (Better Auth, Dodo, Resend, Turnstile, Google). When the migration is done, `apps/web` has only `ASSETS`, an `API` service binding, and public vars.
 4. **The contract is Hono RPC.** `apps/api` exports `type AppType`; `apps/web` builds a typed client with `hc<AppType>()` whose `fetch` is the service binding. External clients use the same routes over HTTPS. Input validation uses the zod schemas we already have, via `@hono/zod-validator`.
-5. **One wrangler config per Worker.** `apps/web/wrangler.jsonc` and `apps/api/wrangler.jsonc`. Root scripts orchestrate both; there is no root wrangler config (one config describes one Worker, and paths resolve relative to it).
+5. **One Cloudflare config per Worker.** `apps/web/cloudflare.config.ts` and `apps/api/cloudflare.config.ts`. Root scripts orchestrate both; there is no root config (one config describes one Worker, and paths resolve relative to it).
 
 ### Repository layout
 
@@ -186,7 +188,7 @@ Done when: `pnpm typecheck`, `pnpm check`, and `pnpm build` pass; the site behav
 
 ### Phase 1: scaffold `apps/api`
 
-1. `apps/api` with Hono, `wrangler.jsonc` bound to the **same** D1 database and R2 bucket (production and preview), `GET /health`.
+1. `apps/api` with Hono, `cloudflare.config.ts` bound to the **same** D1 database and R2 bucket (production and preview), `GET /health`.
 2. Custom domain `api.motionvideo.xyz`; Workers Builds project with root directory `apps/api`.
 3. `API` service binding in `apps/web`, `auxiliaryWorkers` in its Vite config.
 4. Move D1 migrations and the `db:*` scripts to `apps/api`; `deploy` in web stops running migrations.
@@ -231,7 +233,7 @@ Done when: `apps/web/src/server` holds only `api.ts` and thin server functions, 
 
 ### Phase 5: cleanup
 
-1. Remove `DB`, `UPLOADS`, `PRESENCE`, rate limiters, and backend secrets from `apps/web/wrangler.jsonc` and the web Workers Builds settings.
+1. Remove `DB`, `UPLOADS`, `PRESENCE`, rate limiters, and backend secrets from `apps/web/cloudflare.config.ts` and the web Workers Builds settings.
 2. Drop backend dependencies from `apps/web/package.json`.
 3. Update `README.md` (repository table, getting started).
 
@@ -247,7 +249,7 @@ Done when: `apps/web/src/server` holds only `api.ts` and thin server functions, 
 | Dodo webhooks lost during the URL switch | Keep the old route forwarding until the dashboard shows no deliveries there; the sync re-reads from the Dodo API, so redeliveries are safe |
 | Durable Object move resets presence | Acceptable (ephemeral); do it in a quiet hour |
 | Two deploys drift apart | Deploy the API first; keep API changes additive (new routes or optional fields) until the web is deployed |
-| Forgotten binding in preview env | Mirror every production binding in `env.preview` of `apps/api/wrangler.jsonc` in phase 1 |
+| Forgotten binding in preview env | Mirror every production binding in the preview branch of `apps/api/cloudflare.config.ts` in phase 1 |
 
 ## Open questions
 
